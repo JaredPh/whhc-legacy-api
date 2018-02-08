@@ -1,0 +1,44 @@
+import { Entity, PrimaryGeneratedColumn, JoinTable, ManyToOne, Column } from 'typeorm';
+
+import { Location } from '../location/location.entity';
+import { Team } from '../team/team.entity';
+
+@Entity()
+export class Game {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column({ type: 'date' })
+    date: string;
+
+    @Column({ type: 'time', nullable: true })
+    time: string;
+
+    @ManyToOne(type => Team, team => team.id)
+    @JoinTable()
+    homeTeam: Team;
+
+    @Column({ nullable: true })
+    homeScore: number;
+
+    @ManyToOne(type => Team, team => team.id)
+    @JoinTable()
+    awayTeam: Team;
+
+    @Column({ nullable: true })
+    awayScore: number;
+
+    @Column()
+    format: 'league' | 'cup' | 'friendly';
+
+    @Column()
+    status: 'scheduled' | 'result' | 'postponed' | 'cancelled';
+
+    @ManyToOne(type => Location, location => location.id)
+    @JoinTable()
+    location: Location;
+
+
+    // umpires
+}
