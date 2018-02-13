@@ -1,7 +1,6 @@
 import { Location } from './location.entity';
 import { StandardResponse } from '../../utils/models/standard-response.model';
 import { ClubResult } from '../club/club.models';
-import { GameClubResult } from '../game/game.models';
 
 export class LocationResult {
     id: number;
@@ -9,15 +8,16 @@ export class LocationResult {
     address: string;
     town: string;
     postcode: string;
+    clubs?: ClubResult[];
 
-    constructor(data: Location, full: boolean = false) {
+    constructor(data: Location, fields: string[] = []) {
         this.id = data.id;
         this.name = data.name;
         this.address = data.address;
         this.town = data.town;
         this.postcode = data.postcode;
 
-        if (full) {
+        if (fields.indexOf('clubs') >= 0) {
             this.clubs = data.clubs.map(c => new ClubResult(c));
         }
     }
@@ -32,7 +32,7 @@ export class LocationResponse extends StandardResponse {
         if (Array.isArray(data)) {
             this.results = data.map(l => new LocationResult(l));
         } else {
-            this.results = [new LocationResult(data, true)];
+            this.results = [new LocationResult(data, ['clubs'])];
         }
     }
 }

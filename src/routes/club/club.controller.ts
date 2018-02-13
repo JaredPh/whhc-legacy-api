@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 
 import { ClubService } from './club.service';
-import { ClubResponse } from './models/ClubResponse.model';
+import { ClubResponse } from './club.models';
 
 @Controller('clubs')
 export class ClubController {
@@ -11,14 +11,14 @@ export class ClubController {
     ) {}
 
     @Get()
-    async findAll(): Promise<any[]> {
-        return this.clubService.findAll();
+    async findAll(): Promise<ClubResponse> {
+        return new ClubResponse(await this.clubService.findAll());
     }
 
     @Get(':id')
     async findOne(
-        @Param() params,
+        @Param('id') id: number,
     ): Promise<ClubResponse> {
-        return this.clubService.findOne(params.id);
+        return new ClubResponse(await this.clubService.findOne(id));
     }
 }
