@@ -1,6 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 
 import { GameService } from './game.service';
+import { GamesResponse } from './game.models';
 
 @Controller('games')
 export class GameController {
@@ -10,20 +11,14 @@ export class GameController {
     ) {}
 
     @Get()
-    async findAll(): Promise<any[]> {
-        return this.gameService.findAll();
-    }
-
-    @Get('results')
-    async findAll(): Promise<any[]> {
-        return this.gameService.findRecentResults();
+    async findAll(): Promise<GamesResponse> {
+        return new GamesResponse(await this.gameService.findAll());
     }
 
     @Get(':id')
     async findOne(
-        @Param() params,
-    ): Promise<any> {
-        return this.gameService.findOne(params.id);
+        @Param('id') id: number,
+    ): Promise<GamesResponse> {
+        return new GamesResponse(await this.gameService.findOne(id));
     }
-
 }

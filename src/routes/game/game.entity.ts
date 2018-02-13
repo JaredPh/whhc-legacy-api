@@ -28,10 +28,10 @@ export class Game {
     awayScore: number;
 
     @Column()
-    format: 'league' | 'cup' | 'friendly';
+    format: string;
 
     @Column()
-    status: 'scheduled' | 'result' | 'postponed' | 'cancelled';
+    status: string;
 
     @ManyToOne(type => Location, location => location.id)
     location: Location;

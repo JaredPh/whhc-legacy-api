@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 
 import { Club } from './club.entity';
 import { GameService } from '../game/game.service';
+import { ClubResponse } from './club.models';
 
 @Component()
 export class ClubService {
@@ -16,12 +17,8 @@ export class ClubService {
         return await this.clubRepository.find();
     }
 
-    async findOne(id: number): Promise<ClubResponse> {
+    async findOne(id: number): Promise<Club> {
         const relations = ['teams', 'locations'];
-
-        const club = await this.clubRepository.findOneById(id, { relations });
-        // club.games = await this.gameService.findAllByClub(id);
-
-        return club;
+        return await this.clubRepository.findOneById(id, { relations });
     }
 }
