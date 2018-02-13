@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, HttpStatus, NotFoundException, Param, Request, Req } from '@nestjs/common';
 
 import { TeamService } from './team.service';
 import { TeamResponse } from './team.models';
@@ -18,7 +18,12 @@ export class TeamController {
     @Get(':id')
     async findOne(
         @Param('id') id: number,
+        @Req() req: Request,
     ): Promise<TeamResponse> {
-        return new TeamResponse(await this.teamService.findOne(id));
+        const result = await this.teamService.findOne(id);
+
+        if (!result) throw new NotFoundException(`Cannot GET ${req.originalUrl}`, HttpStatus.NOT_FOUND);
+
+        return new TeamResponse(result);
     }
 }
