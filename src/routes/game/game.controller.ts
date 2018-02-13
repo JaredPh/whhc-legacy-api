@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, HttpStatus, NotFoundException, Param, Request, Req } from '@nestjs/common';
 
 import { GameService } from './game.service';
 import { GamesResponse } from './game.models';
@@ -18,7 +18,12 @@ export class GameController {
     @Get(':id')
     async findOne(
         @Param('id') id: number,
+        @Req() req: Request,
     ): Promise<GamesResponse> {
-        return new GamesResponse(await this.gameService.findOne(id));
+        const result = await this.gameService.findOne(id);
+
+        if (!result) throw new NotFoundException(`Cannot GET ${req.originalUrl}`, HttpStatus.NOT_FOUND);
+
+        return new GamesResponse(result);
     }
 }
