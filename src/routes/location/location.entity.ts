@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany } from 'typeorm';
 
-import { Club } from '../club/club.entity';
 import { Game } from '../game/game.entity';
+import { Club } from '../club/club.entity';
 
 @Entity()
 export class Location {
@@ -21,7 +21,7 @@ export class Location {
     @Column({ length: 8 })
     postcode: string;
 
-    @ManyToMany(type => Club, location => location.id)
+    @ManyToMany(type => Club, club => club.locations)
     clubs: Club[];
 
     @OneToMany(type => Game, game => game.location)

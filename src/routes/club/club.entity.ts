@@ -13,10 +13,9 @@ export class Club {
     name: string;
 
     @OneToMany(type => Team, team => team.club)
-    @JoinTable()
     teams: Team[];
 
-    @ManyToMany(type => Location, location => location.id)
+    @ManyToMany(type => Location, location => location.clubs)
     @JoinTable()
     locations: Location[];
 }

@@ -1,6 +1,7 @@
-import { Controller, Get} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 
 import { LocationService } from './location.service';
+import { LocationResponse } from './location.models';
 
 @Controller('locations')
 export class LocationController {
@@ -10,7 +11,14 @@ export class LocationController {
     ) {}
 
     @Get()
-    async findAll(): Promise<any[]> {
-        return this.locationService.findAll();
+    async findAll(): Promise<LocationResponse> {
+        return new LocationResponse(await this.locationService.findAll());
+    }
+
+    @Get(':id')
+    async findOne(
+        @Param('id') id: number,
+    ): Promise<LocationResponse> {
+        return new LocationResponse(await this.locationService.findOne(id));
     }
 }

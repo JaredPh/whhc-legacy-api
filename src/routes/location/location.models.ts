@@ -1,4 +1,7 @@
 import { Location } from './location.entity';
+import { StandardResponse } from '../../utils/models/standard-response.model';
+import { ClubResult } from '../club/club.models';
+import { GameClubResult } from '../game/game.models';
 
 export class LocationResult {
     id: number;
@@ -8,14 +11,28 @@ export class LocationResult {
     postcode: string;
 
     constructor(data: Location, full: boolean = false) {
-        this.id = data.id
+        this.id = data.id;
         this.name = data.name;
         this.address = data.address;
         this.town = data.town;
         this.postcode = data.postcode;
 
         if (full) {
-            // TODO: add full mode to location result
+            this.clubs = data.clubs.map(c => new ClubResult(c));
+        }
+    }
+}
+
+export class LocationResponse extends StandardResponse {
+    results: LocationResult[];
+
+    constructor(data) {
+        super();
+
+        if (Array.isArray(data)) {
+            this.results = data.map(l => new LocationResult(l));
+        } else {
+            this.results = [new LocationResult(data, true)];
         }
     }
 }

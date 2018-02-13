@@ -22,5 +22,5 @@ export class Team {
     homeGames: Game[];
 
     @OneToMany(type => Game, game => game.awayTeam)
-    awayGames: Game[];;
+    awayGames: Game[];
 }

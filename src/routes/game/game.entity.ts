@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, JoinTable, ManyToOne, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, JoinTable, ManyToOne, Column, JoinColumn } from 'typeorm';
 
 import { Location } from '../location/location.entity';
 import { Team } from '../team/team.entity';
@@ -16,14 +16,12 @@ export class Game {
     time: string;
 
     @ManyToOne(type => Team, team => team.id)
-    @JoinTable()
     homeTeam: Team;
 
     @Column({ nullable: true })
     homeScore: number;
 
     @ManyToOne(type => Team, team => team.id)
-    @JoinTable()
     awayTeam: Team;
 
     @Column({ nullable: true })
@@ -36,7 +34,6 @@ export class Game {
     status: 'scheduled' | 'result' | 'postponed' | 'cancelled';
 
     @ManyToOne(type => Location, location => location.id)
-    @JoinTable()
     location: Location;
 
 

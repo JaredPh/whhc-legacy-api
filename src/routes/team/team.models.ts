@@ -28,7 +28,7 @@ export class TeamResponse extends StandardResponse {
     results: TeamResult[];
 
     constructor(data) {
-        super('TEST1234');
+        super();
 
         if (Array.isArray(data)) {
             this.results = data.map(t => new TeamResult(t));
