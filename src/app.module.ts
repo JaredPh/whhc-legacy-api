@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { ClubModule } from './routes/club/club.module';
 import { TeamModule } from './routes/team/team.module';
@@ -11,6 +13,7 @@ import { GameModule } from './routes/game/game.module';
       GameModule,
       LocationModule,
       TeamModule,
+      TypeOrmModule.forRoot(),
   ],
   controllers: [
       AppController,

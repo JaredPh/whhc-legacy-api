@@ -1,5 +1,6 @@
-import { Component, Inject } from '@nestjs/common';
+import { Component } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Team } from './team.entity';
 
@@ -7,7 +8,8 @@ import { Team } from './team.entity';
 export class TeamService {
 
     constructor(
-        @Inject('TeamRepositoryToken') private readonly teamRepository: Repository<Team>,
+        @InjectRepository(Team)
+        private readonly teamRepository: Repository<Team>,
     ) {}
 
     async findAll(): Promise<Team[]> {

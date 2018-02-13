@@ -1,21 +1,19 @@
 import { Module } from '@nestjs/common';
-
-import { DatabaseModule } from '../../utils/database/database.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TeamController } from './team.controller';
 import { TeamService } from './team.service';
-import { teamProviders } from './team.providers';
+import { Team } from './team.entity';
 
 @Module({
     controllers: [
         TeamController,
     ],
     imports: [
-        DatabaseModule,
+        TypeOrmModule.forFeature([Team]),
     ],
     components: [
         TeamService,
-        ...teamProviders,
     ],
 })
 export class TeamModule {}

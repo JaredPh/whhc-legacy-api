@@ -1,21 +1,20 @@
 import { Module } from '@nestjs/common';
 
-import { DatabaseModule } from '../../utils/database/database.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { LocationController } from './location.controller';
 import { LocationService } from './location.service';
-import { locationProviders } from './location.providers';
+import { Location } from './location.entity';
 
 @Module({
     controllers: [
         LocationController,
     ],
     imports: [
-        DatabaseModule,
+        TypeOrmModule.forFeature([Location]),
     ],
     components: [
         LocationService,
-        ...locationProviders,
     ],
 })
 export class LocationModule {}

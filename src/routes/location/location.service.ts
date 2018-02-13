@@ -1,5 +1,6 @@
-import { Component, Inject } from '@nestjs/common';
+import { Component } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Location } from './location.entity';
 
@@ -9,7 +10,8 @@ const relations = ['clubs'];
 export class LocationService {
 
     constructor(
-        @Inject('LocationRepositoryToken') private readonly locationRepository: Repository<Location>,
+        @InjectRepository(Location)
+        private readonly locationRepository: Repository<Location>,
     ) {}
 
     async findAll(): Promise<Location[]> {
