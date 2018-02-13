@@ -1,6 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 
 import { TeamService } from './team.service';
+import { TeamResponse } from './team.models';
 
 @Controller('teams')
 export class TeamController {
@@ -10,21 +11,14 @@ export class TeamController {
     ) {}
 
     @Get()
-    async findAll(): Promise<any[]> {
-        return this.teamService.findAll();
+    async findAll(): Promise<TeamResponse> {
+        return new TeamResponse(await this.teamService.findAll());
     }
 
     @Get(':id')
     async findOne(
-        @Param() params,
-    ): Promise<any> {
-        return this.teamService.findOne(params.id);
-    }
-
-    @Get(':id/games')
-    async findGamesByTeam(
-        @Param() params,
-    ): Promise<any> {
-        return this.teamService.findOne(params.id, { games: true });
+        @Param('id') id: number,
+    ): Promise<TeamResponse> {
+        return new TeamResponse(await this.teamService.findOne(id));
     }
 }

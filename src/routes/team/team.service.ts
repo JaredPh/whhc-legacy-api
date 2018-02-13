@@ -14,15 +14,22 @@ export class TeamService {
         return await this.teamRepository.find({ relations: ['club'] });
     }
 
-    async findOne(id: number, opt: any = {}): Promise<Team> {
-        // let relations: string[] = ['club'];
-
-        // if (opt.games) relations = [...relations, 'homeGames', 'awayGames'];
-
-        const options = {
-//            relations,
-        };
-
-        return await this.teamRepository.findOneById(id, options);
+    async findOne(id: number): Promise<Team> {
+        return await this.teamRepository.findOneById(
+            id,
+            {
+                relations: [
+                    'club',
+                    'homeGames',
+                    'homeGames.location',
+                    'homeGames.awayTeam',
+                    'awayTeam.club',
+                    'awayGames',
+                    'awayGames.location',
+                    'awayGames.homeTeam',
+                    'homeTeam.club',
+                ],
+            },
+        );
     }
 }
