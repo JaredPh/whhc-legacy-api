@@ -5,49 +5,49 @@ import { Test } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { ClubController } from './club.controller';
-import { ClubService } from './club.service';
-import { Club } from './club.entity';
+import { LocationController } from './location.controller';
+import { LocationService } from './location.service';
+import { Location } from './location.entity';
 
 import { MockDataService } from '../../../test-helpers/mock-data.service';
 
 const expect = chai.expect;
 
-class ClubRepository extends Repository<Club> {}
+class LocationRepository extends Repository<Location> {}
 
-describe('ClubController', () => {
+describe('LocationController', () => {
     const mockData = new MockDataService();
 
-    let clubController: ClubController;
-    let clubService: ClubService;
+    let locationController: LocationController;
+    let locationService: LocationService;
 
     beforeEach(async () => {
 
         const module = await Test.createTestingModule({
             controllers: [
-                ClubController,
+                LocationController,
             ],
             components: [
-                ClubService,
-                ClubRepository,
+                LocationService,
+                LocationRepository,
             ],
         }).compile();
 
-        clubService = module.get<ClubService>(ClubService);
-        clubController = module.get<ClubController>(ClubController);
+        locationService = module.get<LocationService>(LocationService);
+        locationController = module.get<LocationController>(LocationController);
     });
 
     describe('findAll', () => {
         let data: any;
-        let response: Club;
+        let response: Location;
 
         beforeEach(async () => {
-            data = mockData.getClubs();
+            data = mockData.getLocations();
 
-            sinon.stub(clubService, 'findAll')
+            sinon.stub(locationService, 'findAll')
                 .returns(data);
 
-            response = await clubController.findAll();
+            response = await locationController.findAll();
         });
 
         it('should have the standard response fields', async () => {
@@ -58,15 +58,15 @@ describe('ClubController', () => {
             expect(response.results).to.have.lengthOf(data.length);
         });
 
-        it('should return an array of clubs with fields id and name', async () => {
+        it('should return an array of locations with fields id and name', async () => {
             response.results.map(r =>
-                expect(r).to.have.keys(['id', 'name']),
+                expect(r).to.have.keys(['id', 'name', 'address', 'town', 'postcode']),
             );
         });
 
-        it('should return an array of clubs without fields teams and locations', async () => {
+        it('should return an array of clubs without the field club', async () => {
             response.results.map(r =>
-                expect(r).to.not.have.keys(['teams', 'locations']),
+                expect(r).to.not.have.key('clubs'),
             );
         });
     });
@@ -74,11 +74,11 @@ describe('ClubController', () => {
     describe('findOne', () => {
 
         describe('with valid id', () => {
-            let response: Club;
+            let response: Location;
 
             beforeEach(async () => {
-                sinon.stub(clubService, 'findOne').returns(mockData.getClubs(1)[0]);
-                response = await clubController.findOne(1);
+                sinon.stub(locationService, 'findOne').returns(mockData.getLocations(1)[0]);
+                response = await locationController.findOne(1);
             });
 
             it('should have the standard response fields', () => {
@@ -89,18 +89,17 @@ describe('ClubController', () => {
                 expect(response.results).to.have.length(1);
             });
 
-            it('should have the fields (\'id\', \'name\', \'locations\', \'teams\') in the result', () => {
-                expect(response.results[0]).to.have.keys(['id', 'name', 'locations', 'teams']);
+            it('should have the fields (\'id\', \'name\', \'address\', \'town\', \'postcode\', \'clubs\') in the result', () => {
+                expect(response.results[0]).to.have.keys(['id', 'name', 'address', 'town', 'postcode', 'clubs']);
             });
         });
 
         describe('with invalid id', () => {
             it('should return a not found exception', async () => {
-
-                sinon.stub(clubService, 'findOne').returns(null);
+                sinon.stub(locationService, 'findOne').returns(undefined);
 
                 try {
-                    await clubController.findOne(1);
+                    await locationController.findOne(1);
                 }
                 catch (e) {
                     expect(e instanceof NotFoundException).to.be.true;

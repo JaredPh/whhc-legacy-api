@@ -5,68 +5,68 @@ import { Test } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { ClubController } from './club.controller';
-import { ClubService } from './club.service';
-import { Club } from './club.entity';
+import { TeamController } from './team.controller';
+import { TeamService } from './team.service';
+import { Team } from './team.entity';
 
 import { MockDataService } from '../../../test-helpers/mock-data.service';
 
 const expect = chai.expect;
 
-class ClubRepository extends Repository<Club> {}
+class TeamRepository extends Repository<Team> {}
 
-describe('ClubController', () => {
+describe('TeamController', () => {
     const mockData = new MockDataService();
 
-    let clubController: ClubController;
-    let clubService: ClubService;
+    let teamController: TeamController;
+    let teamService: TeamService;
 
     beforeEach(async () => {
 
         const module = await Test.createTestingModule({
             controllers: [
-                ClubController,
+                TeamController,
             ],
             components: [
-                ClubService,
-                ClubRepository,
+                TeamService,
+                TeamRepository,
             ],
         }).compile();
 
-        clubService = module.get<ClubService>(ClubService);
-        clubController = module.get<ClubController>(ClubController);
+        teamService = module.get<TeamService>(TeamService);
+        teamController = module.get<TeamController>(TeamController);
     });
 
     describe('findAll', () => {
         let data: any;
-        let response: Club;
+        let response: Team;
 
         beforeEach(async () => {
-            data = mockData.getClubs();
+            data = mockData.getTeams();
 
-            sinon.stub(clubService, 'findAll')
+            sinon.stub(teamService, 'findAll')
                 .returns(data);
 
-            response = await clubController.findAll();
+            response = await teamController.findAll();
         });
 
         it('should have the standard response fields', async () => {
             expect(response).to.have.keys(['messages', 'results']);
         });
 
-        it('should return an array of clubs in results', async () => {
+        it('should return an array of teams in results', async () => {
             expect(response.results).to.have.lengthOf(data.length);
         });
 
-        it('should return an array of clubs with fields id and name', async () => {
+        it('should return an array of teams with fields id and name and club', async () => {
             response.results.map(r =>
-                expect(r).to.have.keys(['id', 'name']),
+                expect(r).to.have.keys(['id', 'name', 'club']),
             );
         });
 
-        it('should return an array of clubs without fields teams and locations', async () => {
+        it('should return an array of teams without the field games', async () => {
             response.results.map(r =>
-                expect(r).to.not.have.keys(['teams', 'locations']),
+                expect(r).to.not.have.key('games'),
             );
         });
     });
@@ -74,33 +74,32 @@ describe('ClubController', () => {
     describe('findOne', () => {
 
         describe('with valid id', () => {
-            let response: Club;
+            let response: Team;
 
             beforeEach(async () => {
-                sinon.stub(clubService, 'findOne').returns(mockData.getClubs(1)[0]);
-                response = await clubController.findOne(1);
+                sinon.stub(teamService, 'findOne').returns(mockData.getTeams(1)[0]);
+                response = await teamController.findOne(1);
             });
 
             it('should have the standard response fields', () => {
                 expect(response).to.have.keys(['messages', 'results']);
             });
 
-            it('should contain only one result ', () => {
+            it('should contain only one result', () => {
                 expect(response.results).to.have.length(1);
             });
 
-            it('should have the fields (\'id\', \'name\', \'locations\', \'teams\') in the result', () => {
-                expect(response.results[0]).to.have.keys(['id', 'name', 'locations', 'teams']);
+            it('should have the fields (\'id\', \'name\', \'club\', \'games\') in the result', () => {
+                expect(response.results[0]).to.have.keys(['id', 'name', 'club', 'games']);
             });
         });
 
         describe('with invalid id', () => {
             it('should return a not found exception', async () => {
-
-                sinon.stub(clubService, 'findOne').returns(null);
+                sinon.stub(teamService, 'findOne').returns(undefined);
 
                 try {
-                    await clubController.findOne(1);
+                    await teamController.findOne(1);
                 }
                 catch (e) {
                     expect(e instanceof NotFoundException).to.be.true;
