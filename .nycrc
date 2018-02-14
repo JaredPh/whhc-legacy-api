@@ -5,10 +5,11 @@
   "functions": 99,
   "branches": 99,
   "include": [
-    "**/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.entity.ts"
   ],
   "reporter": [
     "lcov",
@@ -19,6 +20,6 @@
     ".ts"
   ],
   "cache": false,
-  "all": true,
+  "all": false,
   "report-dir": "./coverage"
 }
