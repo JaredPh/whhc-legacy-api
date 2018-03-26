@@ -1,0 +1,25 @@
+{
+  "check-coverage": false,
+  "lines": 99,
+  "statements": 99,
+  "functions": 99,
+  "branches": 99,
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.entity.ts"
+  ],
+  "reporter": [
+    "lcov",
+    "text-summary"
+  ],
+  "require": [],
+  "extension": [
+    ".ts"
+  ],
+  "cache": false,
+  "all": false,
+  "report-dir": "./coverage"
+}

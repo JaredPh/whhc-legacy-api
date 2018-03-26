@@ -19,9 +19,7 @@ export class LocationService {
     }
 
     async findOne(id: number): Promise<Location> {
-        return await this.locationRepository.findOneById(
-            id, { relations },
-        );
+        return await this.locationRepository.findOneById(id, { relations });
     }
 
 }

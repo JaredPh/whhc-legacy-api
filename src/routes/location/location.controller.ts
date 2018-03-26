@@ -1,4 +1,4 @@
-import { Controller, Get, HttpStatus, NotFoundException, Param, Request, Req } from '@nestjs/common';
+import { Controller, Get, Inject, NotFoundException, Param } from '@nestjs/common';
 
 import { LocationService } from './location.service';
 import { LocationResponse } from './location.models';
@@ -18,11 +18,10 @@ export class LocationController {
     @Get(':id')
     async findOne(
         @Param('id') id: number,
-        @Req() req: Request,
     ): Promise<LocationResponse> {
         const result = await this.locationService.findOne(id);
 
-        if (!result) throw new NotFoundException(`Cannot GET ${req.originalUrl}`, HttpStatus.NOT_FOUND);
+        if (!result) throw new NotFoundException();
 
         return new LocationResponse(result);
     }
