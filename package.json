@@ -18,15 +18,19 @@
     "@nestjs/testing": "^4.5.5",
     "@nestjs/typeorm": "^2.0.0",
     "@nestjs/websockets": "^4.5.8",
+    "bcrypt": "^1.0.3",
     "compression": "^1.7.1",
+    "cookie-parser": "^1.4.3",
     "helmet": "^3.10.0",
-    "moment": "^2.20.1",
+    "jsonwebtoken": "^8.2.0",
+    "moment": "^2.21.0",
     "mysql": "^2.15.0",
     "redis": "^2.7.1",
     "reflect-metadata": "^0.1.10",
     "rxjs": "^5.5.6",
     "typeorm": "^0.1.12",
-    "typescript": "^2.6.2"
+    "typescript": "^2.6.2",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
