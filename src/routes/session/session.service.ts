@@ -9,20 +9,21 @@ import * as uuid from 'uuid/v4';
 
 import { Member } from '../members/models/members.entity';
 import { Session } from './models/session.entity';
-import { LoginResponse } from './models/login-response.interface';
+import { LoginTokens } from './models/login.interfaces';
 
 @Component()
 export class SessionService {
 
+    /**
+     * @todo Istanbul - remove any when branch bug is resolved
+     * @see https://github.com/istanbuljs/istanbuljs/issues/70
+     */
     constructor(
-        @InjectRepository(Member)
-        private readonly membersRepository: Repository<Member>,
-
-        @InjectRepository(Session)
-        private readonly sessionRepository: Repository<Session>,
+        @InjectRepository(Member) private readonly membersRepository: Repository<Member> | any,
+        @InjectRepository(Session) private readonly sessionRepository: Repository<Session> | any,
     ) {}
 
-    public async loginWithPassword(email: string, password: string): Promise<{ response: LoginResponse, cookie: string}> {
+    public async loginWithPassword(email: string, password: string): Promise<LoginTokens> {
         let credentialsAreValid: boolean;
 
         const member: Member = await this.membersRepository.findOne({ email });
@@ -41,16 +42,14 @@ export class SessionService {
             cookie: await SessionService.generateHash(id),
             access: await SessionService.generateHash(id),
             refresh: await SessionService.generateHash(id),
-            accessExpiry: moment().add(1, 'hours').toDate(),
+            accessExpiry: moment().add(1, 'hour').toDate(),
             refreshExpiry: moment().add(7, 'days').toDate(),
         });
 
         return {
-            response: {
-                accessToken: SessionService.generateToken('access', session),
-                refreshToken: SessionService.generateToken('refresh', session),
-            },
-            cookie: session.cookie,
+            accessToken: SessionService.generateToken('access', session),
+            refreshToken: SessionService.generateToken('refresh', session),
+            cookieToken: session.cookie,
         };
     }
 
