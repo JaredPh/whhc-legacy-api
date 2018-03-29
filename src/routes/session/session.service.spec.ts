@@ -44,8 +44,8 @@ describe('SessionService', () => {
     let sessionRepository: SessionRepository;
     let sessionService: SessionService;
 
-    let memberRepositoryMock: SinonStub;
-    let sessionRepositoryMock: SinonSpy;
+    let memberRepositoryFindOneStub: SinonStub;
+    let sessionRepositorySaveSpy: SinonSpy;
 
     before(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -101,15 +101,15 @@ describe('SessionService', () => {
                     password: hash,
                 };
 
-                memberRepositoryMock = sinon.stub(memberRepository, 'findOne').returns(mockMember);
-                sessionRepositoryMock = sinon.stub(sessionRepository, 'save').returnsArg(0);
+                memberRepositoryFindOneStub = sinon.stub(memberRepository, 'findOne').returns(mockMember);
+                sessionRepositorySaveSpy = sinon.stub(sessionRepository, 'save').returnsArg(0);
 
                 result = await sessionService.loginWithPassword(email, password);
             });
 
             after(() => {
-                memberRepositoryMock.restore();
-                sessionRepositoryMock.restore();
+                memberRepositoryFindOneStub.restore();
+                sessionRepositorySaveSpy.restore();
             });
 
             describe('an accessToken', () => {
@@ -219,8 +219,8 @@ describe('SessionService', () => {
                     password: hash,
                 };
 
-                memberRepositoryMock = sinon.stub(memberRepository, 'findOne').returns(mockMember);
-                sessionRepositoryMock = sinon.spy(sessionRepository, 'save');
+                memberRepositoryFindOneStub = sinon.stub(memberRepository, 'findOne').returns(mockMember);
+                sessionRepositorySaveSpy = sinon.spy(sessionRepository, 'save');
 
                 try {
                     result = await sessionService.loginWithPassword(email, password);
@@ -230,12 +230,12 @@ describe('SessionService', () => {
             });
 
             after(() => {
-                memberRepositoryMock.restore();
-                sessionRepositoryMock.restore();
+                memberRepositoryFindOneStub.restore();
+                sessionRepositorySaveSpy.restore();
             });
 
             it('should not call the session repository', () => {
-                expect(sessionRepositoryMock).to.have.not.been.called;
+                expect(sessionRepositorySaveSpy).to.have.not.been.called;
             });
 
             it('should throw an UnauthorizedException', () => {
@@ -269,8 +269,8 @@ describe('SessionService', () => {
 
                 mockMember = undefined;
 
-                memberRepositoryMock = sinon.stub(memberRepository, 'findOne').returns(mockMember);
-                sessionRepositoryMock = sinon.spy(sessionRepository, 'save');
+                memberRepositoryFindOneStub = sinon.stub(memberRepository, 'findOne').returns(mockMember);
+                sessionRepositorySaveSpy = sinon.spy(sessionRepository, 'save');
 
                 try {
                     result = await sessionService.loginWithPassword(email, password);
@@ -280,12 +280,12 @@ describe('SessionService', () => {
             });
 
             after(() => {
-                memberRepositoryMock.restore();
-                sessionRepositoryMock.restore();
+                memberRepositoryFindOneStub.restore();
+                sessionRepositorySaveSpy.restore();
             });
 
             it('should not call the session repository', () => {
-                expect(sessionRepositoryMock).to.have.not.been.called;
+                expect(sessionRepositorySaveSpy).to.have.not.been.called;
             });
 
             it('should throw an UnauthorizedException', () => {

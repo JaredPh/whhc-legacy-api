@@ -6,12 +6,10 @@ import { TestingModule } from '@nestjs/testing/testing-module';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import { SinonSpy, SinonStub } from 'sinon';
+import { SinonSpy } from 'sinon';
 
 /* Nest */
 import { Request } from '@nestjs/common';
-
-/* External dependancies */
 
 /* API dependancies */
 import { SessionController } from './session.controller';
@@ -30,8 +28,8 @@ describe('SessionController', () => {
     let sessionService: SessionService;
     let sessionController: SessionController;
 
-    let sessionServiceMock: SinonSpy;
-    let requestServiceMock: SinonStub;
+    let sessionServiceLoginSpy: SinonSpy;
+    let resCookieSpy: SinonSpy;
 
     let req: Request;
     let result: LoginResponse;
@@ -58,7 +56,12 @@ describe('SessionController', () => {
            },
         };
 
-        requestServiceMock = sinon.stub(req.res, 'cookie').returns(() => {});
+        resCookieSpy = sinon.spy(req.res, 'cookie');
+    });
+
+    after(() => {
+        sessionServiceLoginSpy.restore();
+        resCookieSpy.restore();
     });
 
     describe('login()', () => {
@@ -75,7 +78,7 @@ describe('SessionController', () => {
                 cookieToken: 'z',
             };
 
-            sessionServiceMock = sinon
+            sessionServiceLoginSpy = sinon
                 .stub(sessionService, 'loginWithPassword')
                 .resolves(spyResponse);
 
@@ -83,11 +86,11 @@ describe('SessionController', () => {
         });
 
         it('should call the session service', () => {
-            expect(sessionServiceMock).to.have.been.called;
+            expect(sessionServiceLoginSpy).to.have.been.called;
         });
 
         it('should add a cookie to the response', () => {
-            expect(requestServiceMock).to.have.been.calledWith('CSRF-TOKEN', 'z', { httpOnly: true, secure: false });
+            expect(resCookieSpy).to.have.been.calledWith('CSRF-TOKEN', 'z', { httpOnly: true, secure: false });
         });
 
         it('should return an access token in the body', () => {
