@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, Request, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Inject, Post, Request, UnauthorizedException, ValidationPipe } from '@nestjs/common';
 
 import { SessionService } from './session.service';
 
@@ -23,18 +23,22 @@ export class SessionController {
     @Post()
     async login(
         @Request() req: Request | any,
-        @Body(new ValidationPipe()) loginRequest: LoginRequest | any,
+        @Body(new ValidationPipe()) loginRequest: LoginRequest,
     ): Promise<LoginResponse> {
         const {
             email,
             password,
         } = loginRequest;
 
+        const loginResult = await this.sessionService.loginWithPassword(email, password);
+
+        if (!loginResult) throw new UnauthorizedException('Invalid Credentials');
+
         const {
             accessToken,
             refreshToken,
             cookieToken,
-        } = await this.sessionService.loginWithPassword(email, password);
+        } = loginResult;
 
         // todo: look at secure cookies in prod
         req.res.cookie('CSRF-TOKEN', cookieToken, { httpOnly: true, secure: false });

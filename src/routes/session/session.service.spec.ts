@@ -222,11 +222,7 @@ describe('SessionService', () => {
                 memberRepositoryFindOneStub = sinon.stub(memberRepository, 'findOne').returns(mockMember);
                 sessionRepositorySaveSpy = sinon.spy(sessionRepository, 'save');
 
-                try {
-                    result = await sessionService.loginWithPassword(email, password);
-                } catch (error) {
-                    caughtError = error;
-                }
+                result = await sessionService.loginWithPassword(email, password);
             });
 
             after(() => {
@@ -238,16 +234,8 @@ describe('SessionService', () => {
                 expect(sessionRepositorySaveSpy).to.have.not.been.called;
             });
 
-            it('should throw an UnauthorizedException', () => {
-                expect(caughtError instanceof UnauthorizedException).to.be.true;
-            });
-
-            it('should return a 401 status', () => {
-                expect(caughtError.response.statusCode).to.be.equal(401);
-            });
-
-            it('should return a message of Invalid \'Credentials\'', () => {
-                expect(caughtError.response.message).to.be.string('Invalid Credentials');
+            it('should return null', () => {
+                expect(result).to.be.null;
             });
         });
 
@@ -256,10 +244,7 @@ describe('SessionService', () => {
             let email: string;
             let password: string;
 
-            let caughtError: any;
-
             let result: LoginResponse;
-            // let error: any;
 
             let mockMember: Member;
 
@@ -272,11 +257,7 @@ describe('SessionService', () => {
                 memberRepositoryFindOneStub = sinon.stub(memberRepository, 'findOne').returns(mockMember);
                 sessionRepositorySaveSpy = sinon.spy(sessionRepository, 'save');
 
-                try {
-                    result = await sessionService.loginWithPassword(email, password);
-                } catch (error) {
-                    caughtError = error;
-                }
+                result = await sessionService.loginWithPassword(email, password);
             });
 
             after(() => {
@@ -288,16 +269,8 @@ describe('SessionService', () => {
                 expect(sessionRepositorySaveSpy).to.have.not.been.called;
             });
 
-            it('should throw an UnauthorizedException', () => {
-                expect(caughtError instanceof UnauthorizedException).to.be.true;
-            });
-
-            it('should return a 401 status', () => {
-                expect(caughtError.response.statusCode).to.be.equal(401);
-            });
-
-            it('should return a message of Invalid \'Credentials\'', () => {
-                expect(caughtError.response.message).to.be.string('Invalid Credentials');
+            it('should return null', () => {
+                expect(result).to.be.null;
             });
         });
     });
