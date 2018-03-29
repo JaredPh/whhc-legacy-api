@@ -159,22 +159,6 @@ describe('SessionController', () => {
             expect(resCookieSpy).to.not.have.been.called;
         });
 
-        // it('should return an access token in the body', () => {
-        //     expect(result).to.contain.key('accessToken');
-        //     expect(result.accessToken).to.be.a('string');
-        //     expect(result.accessToken).to.be.string('x');
-        // });
-
-        // it('should return a refresh token in the body', () => {
-        //     expect(result).to.contain.key('refreshToken');
-        //     expect(result.refreshToken).to.be.a('string');
-        //     expect(result.refreshToken).to.be.string('y');
-        // });
-
-        // it('should not return the cookie token in the body', () => {
-        //     expect(result).not.to.contain.key('cookieToken');
-        // });
-
         it('should throw an UnauthorizedException', () => {
             expect(caughtError instanceof UnauthorizedException).to.be.true;
         });
