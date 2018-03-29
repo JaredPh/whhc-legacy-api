@@ -24,6 +24,7 @@ export class SessionService {
     ) {}
 
     public async loginWithPassword(email: string, password: string): Promise<LoginTokens> {
+
         let credentialsAreValid: boolean;
 
         const member: Member = await this.membersRepository.findOne({ email });
@@ -58,6 +59,7 @@ export class SessionService {
     }
 
     private static generateToken(type: 'access' | 'refresh', session: Session): string {
+        // todo: make env var
         const secret = 'xxx';
 
         const expiry =  (type === 'access')

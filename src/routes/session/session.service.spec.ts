@@ -1,24 +1,27 @@
+/* Nest Testing */
 import { Test } from '@nestjs/testing';
 import { TestingModule } from '@nestjs/testing/testing-module';
-import { Repository } from 'typeorm';
 
+/* Chai and chai addons */
 import * as chai from 'chai';
 import * as chaiJWT from 'chai-jwt';
 import * as chaiMoment from 'chai-moment';
 import * as chaiUUID from 'chai-uuid';
-
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import { SinonSpy, SinonStub } from 'sinon';
 
-import * as moment from 'moment';
-
+/* Nest */
+import { Repository } from 'typeorm';
 import { UnauthorizedException } from '@nestjs/common';
 
-import { SessionService } from './session.service';
+/* External dependancies */
+import * as moment from 'moment';
 
+/* API dependancies */
+import { SessionService } from './session.service';
 import { Member } from '../members/models/members.entity';
 import { Session } from './models/session.entity';
-
 import { LoginResponse } from './models/login.interfaces';
 
 chai.use(chaiJWT);
@@ -31,6 +34,7 @@ const expect = chai.expect;
 class MemberRepository extends Repository<Member> {
     findOne() {}
 }
+
 class SessionRepository extends Repository<Session> {
     save() {}
 }
@@ -40,8 +44,8 @@ describe('SessionService', () => {
     let sessionRepository: SessionRepository;
     let sessionService: SessionService;
 
-    let sessionRepositoryMock;
-    let memberRepositoryMock;
+    let memberRepositoryMock: SinonStub;
+    let sessionRepositoryMock: SinonSpy;
 
     before(async () => {
         const module: TestingModule = await Test.createTestingModule({
