@@ -1,11 +1,27 @@
-import { Body, Controller, Inject, Post, Request, UnauthorizedException, ValidationPipe } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Post,
+    Request,
+    Session,
+    UnauthorizedException,
+    UseGuards,
+    ValidationPipe,
+} from '@nestjs/common';
 
 import { SessionService } from './session.service';
 
-import { LoginRequest } from './models/login-request.model';
-import { LoginResponse } from './models/login.interfaces';
+import { SessionRequest } from './session.models';
+import { SessionTokenResponse } from './session.interfaces';
+import { Authorised, Token } from './session.decorators';
+import { SessionGuard } from './session.guard';
+
+import { INVALID_CREDENTIALS } from '../../utils/errors/error.messages';
 
 @Controller('session')
+@UseGuards(SessionGuard)
 export class SessionController {
 
     /**
@@ -22,9 +38,9 @@ export class SessionController {
      */
     @Post()
     async login(
-        @Request() req: Request | any,
-        @Body(new ValidationPipe()) loginRequest: LoginRequest,
-    ): Promise<LoginResponse> {
+        @Request() req: any,
+        @Body(new ValidationPipe()) loginRequest: SessionRequest,
+    ): Promise<SessionTokenResponse> {
         const {
             email,
             password,
@@ -32,7 +48,7 @@ export class SessionController {
 
         const loginResult = await this.sessionService.loginWithPassword(email, password);
 
-        if (!loginResult) throw new UnauthorizedException('Invalid Credentials');
+        if (!loginResult) throw new UnauthorizedException(INVALID_CREDENTIALS);
 
         const {
             accessToken,
@@ -42,6 +58,24 @@ export class SessionController {
 
         // todo: look at secure cookies in prod
         req.res.cookie('CSRF-TOKEN', cookieToken, { httpOnly: true, secure: false });
+
+        return {
+            accessToken,
+            refreshToken,
+        };
+    }
+
+    @Get()
+    @Authorised()
+    @Token('refresh')
+    async refresh(
+        @Session() session: any, // todo: add type
+    ): Promise<SessionTokenResponse> {
+
+        const {
+            accessToken,
+            refreshToken,
+        } = await this.sessionService.refreshTokens(session.id);
 
         return {
             accessToken,

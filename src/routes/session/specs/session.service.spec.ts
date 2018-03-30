@@ -19,10 +19,10 @@ import { UnauthorizedException } from '@nestjs/common';
 import * as moment from 'moment';
 
 /* API dependancies */
-import { SessionService } from './session.service';
-import { Member } from '../members/models/members.entity';
-import { Session } from './models/session.entity';
-import { LoginResponse } from './models/login.interfaces';
+import { SessionService } from '../session.service';
+import { Member } from '../../members/models/members.entity';
+import { Session } from '../session.entity';
+import { SessionTokenResponse } from '../session.interfaces';
 
 chai.use(chaiJWT);
 chai.use(chaiMoment);
@@ -74,7 +74,7 @@ describe('SessionService', () => {
             let email: string;
             let password: string;
 
-            let result: LoginResponse;
+            let result: SessionTokenResponse;
 
             let mockMember: Member;
 
@@ -203,7 +203,7 @@ describe('SessionService', () => {
 
             let caughtError: any;
 
-            let result: LoginResponse;
+            let result: SessionTokenResponse;
             // let error: any;
 
             let mockMember: Member;
@@ -244,7 +244,7 @@ describe('SessionService', () => {
             let email: string;
             let password: string;
 
-            let result: LoginResponse;
+            let result: SessionTokenResponse;
 
             let mockMember: Member;
 

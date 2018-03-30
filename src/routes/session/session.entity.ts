@@ -15,12 +15,9 @@ export class Session {
     @Column()
     access: string;
 
-    @Column({ type: 'datetime' })
-    accessExpiry: Date;
-
     @Column()
     refresh: string;
 
     @Column({ type: 'datetime' })
-    refreshExpiry: Date;
+    expiry: Date;
 }

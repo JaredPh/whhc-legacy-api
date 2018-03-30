@@ -13,9 +13,9 @@ import { Request } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common';
 
 /* API dependancies */
-import { SessionController } from './session.controller';
-import { LoginRequest } from './models/login-request.model';
-import { LoginResponse, LoginTokens } from './models/login.interfaces';
+import { SessionController } from '../session.controller';
+import { SessionRequest } from '../session.models';
+import { SessionTokenResponse, SessionTokens } from '../session.interfaces';
 
 chai.use(sinonChai);
 
@@ -51,16 +51,16 @@ describe('SessionController', () => {
         describe('when the service returns loginTokens', () => {
             let sessionServiceLoginSpy: SinonSpy;
             let resCookieSpy: SinonSpy;
-            let result: LoginResponse;
+            let result: SessionTokenResponse;
             let req: Request;
 
             before(async () => {
-                const credentials: LoginRequest = {
+                const credentials: SessionRequest = {
                     email: 'valid@email.com',
                     password: 'validPass1',
                 };
 
-                const spyResponse: LoginTokens = {
+                const spyResponse: SessionTokens = {
                     accessToken: 'x',
                     refreshToken: 'y',
                     cookieToken: 'z',
@@ -115,17 +115,17 @@ describe('SessionController', () => {
     describe('when the service returns null', () => {
         let sessionServiceLoginSpy: SinonSpy;
         let resCookieSpy: SinonSpy;
-        let result: LoginResponse;
+        let result: SessionTokenResponse;
         let req: Request;
         let caughtError: any;
 
         before(async () => {
-            const credentials: LoginRequest = {
+            const credentials: SessionRequest = {
                 email: 'valid@email.com',
                 password: 'validPass1',
             };
 
-            const spyResponse: LoginTokens = null;
+            const spyResponse: SessionTokens = null;
 
             req = {
                 res: {

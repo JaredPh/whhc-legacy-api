@@ -6,7 +6,7 @@ import { SessionService } from './session.service';
 
 import { MembersModule } from '../members/members.module';
 import { Member } from '../members/models/members.entity';
-import { Session } from './models/session.entity';
+import { Session } from './session.entity';
 
 @Module({
     controllers: [
