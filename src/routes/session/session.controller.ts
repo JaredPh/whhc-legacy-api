@@ -15,7 +15,7 @@ import { SessionService } from './session.service';
 
 import { SessionRequest } from './session.models';
 import { SessionTokenResponse } from './session.interfaces';
-import { Authorised, Token } from './session.decorators';
+import { Authorise } from './session.decorators';
 import { SessionGuard } from './session.guard';
 
 import { INVALID_CREDENTIALS } from '../../utils/errors/error.messages';
@@ -66,8 +66,7 @@ export class SessionController {
     }
 
     @Get()
-    @Authorised()
-    @Token('refresh')
+    @Authorise('refresh')
     async refresh(
         @Session() session: any, // todo: add type
     ): Promise<SessionTokenResponse> {

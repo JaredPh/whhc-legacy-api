@@ -156,7 +156,7 @@ export class SessionService {
         return {
             sessionId: decoded.header.kid,
             token: decoded.payload.jti,
-            type: decoded.payload.sub,
+            type: decoded.payload.scope,
         };
     }
 }

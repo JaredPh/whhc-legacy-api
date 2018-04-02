@@ -17,12 +17,16 @@ import { SessionController } from '../session.controller';
 import { SessionRequest } from '../session.models';
 import { SessionTokenResponse, SessionTokens } from '../session.interfaces';
 
+/* API Test dependancies */
+import { mockSession, mockSessionTokens } from './session.test-helpers';
+
 chai.use(sinonChai);
 
 const expect = chai.expect;
 
 class SessionService {
     loginWithPassword() {}
+    refreshTokens() {}
 }
 
 describe('SessionController', () => {
@@ -60,12 +64,6 @@ describe('SessionController', () => {
                     password: 'validPass1',
                 };
 
-                const spyResponse: SessionTokens = {
-                    accessToken: 'x',
-                    refreshToken: 'y',
-                    cookieToken: 'z',
-                };
-
                 req = {
                     res: {
                         cookie: () => {},
@@ -74,7 +72,7 @@ describe('SessionController', () => {
 
                 sessionServiceLoginSpy = sinon
                     .stub(sessionService, 'loginWithPassword')
-                    .resolves(spyResponse);
+                    .resolves(mockSessionTokens);
 
                 resCookieSpy = sinon.spy(req.res, 'cookie');
 
@@ -91,19 +89,19 @@ describe('SessionController', () => {
             });
 
             it('should add a cookie to the response', () => {
-                expect(resCookieSpy).to.have.been.calledWith('CSRF-TOKEN', 'z', { httpOnly: true, secure: false });
+                expect(resCookieSpy).to.have.been.calledWith('CSRF-TOKEN', mockSessionTokens.cookieToken, { httpOnly: true, secure: false });
             });
 
             it('should return an access token in the body', () => {
                 expect(result).to.contain.key('accessToken');
                 expect(result.accessToken).to.be.a('string');
-                expect(result.accessToken).to.be.string('x');
+                expect(result.accessToken).to.be.string(mockSessionTokens.accessToken);
             });
 
             it('should return a refresh token in the body', () => {
                 expect(result).to.contain.key('refreshToken');
                 expect(result.refreshToken).to.be.a('string');
-                expect(result.refreshToken).to.be.string('y');
+                expect(result.refreshToken).to.be.string(mockSessionTokens.refreshToken);
             });
 
             it('should not return the cookie token in the body', () => {
@@ -112,7 +110,7 @@ describe('SessionController', () => {
         });
 
         describe('when the service returns null', () => {
-            let sessionServiceLoginSpy: SinonSpy;
+            let sessionServiceLoginStub: SinonSpy;
             let resCookieSpy: SinonSpy;
             let result: SessionTokenResponse;
             let req: Request;
@@ -124,7 +122,7 @@ describe('SessionController', () => {
                     password: 'validPass1',
                 };
 
-                const spyResponse: SessionTokens = null;
+                const stubResponse: SessionTokens = null;
 
                 req = {
                     res: {
@@ -132,9 +130,9 @@ describe('SessionController', () => {
                     },
                 };
 
-                sessionServiceLoginSpy = sinon
+                sessionServiceLoginStub = sinon
                     .stub(sessionService, 'loginWithPassword')
-                    .resolves(spyResponse);
+                    .resolves(stubResponse);
 
                 resCookieSpy = sinon.spy(req.res, 'cookie');
 
@@ -146,12 +144,12 @@ describe('SessionController', () => {
             });
 
             after(() => {
-                sessionServiceLoginSpy.restore();
+                sessionServiceLoginStub.restore();
                 resCookieSpy.restore();
             });
 
             it('should call the session service', () => {
-                expect(sessionServiceLoginSpy).to.have.been.called;
+                expect(sessionServiceLoginStub).to.have.been.called;
             });
 
             it('should not a cookie to the response', () => {
@@ -169,6 +167,44 @@ describe('SessionController', () => {
             it('should return a message of Invalid \'Credentials\'', () => {
                 expect(caughtError.response.message).to.be.string('Invalid Credentials');
             });
+        });
+    });
+
+    describe('refresh()', () => {
+        let sessionServiceRefeshTokenStub: SinonStub;
+        let result: SessionTokenResponse;
+
+        before(async () => {
+
+            sessionServiceRefeshTokenStub = sinon
+                .stub(sessionService, 'refreshTokens')
+                .resolves(mockSessionTokens);
+
+            result = await sessionController.refresh(mockSession);
+        });
+
+        after(() => {
+            sessionServiceRefeshTokenStub.restore();
+        });
+
+        it('should call the session service', () => {
+            expect(sessionServiceRefeshTokenStub).to.have.been.called;
+        });
+
+        it('should return an access token in the body', () => {
+            expect(result).to.contain.key('accessToken');
+            expect(result.accessToken).to.be.a('string');
+            expect(result.accessToken).to.be.string(mockSessionTokens.accessToken);
+        });
+
+        it('should return a refresh token in the body', () => {
+            expect(result).to.contain.key('refreshToken');
+            expect(result.refreshToken).to.be.a('string');
+            expect(result.refreshToken).to.be.string(mockSessionTokens.refreshToken);
+        });
+
+        it('should not return the cookie token in the body', () => {
+            expect(result).not.to.contain.key('cookieToken');
         });
     });
 });

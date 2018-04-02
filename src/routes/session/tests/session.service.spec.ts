@@ -9,7 +9,7 @@ import * as chaiMoment from 'chai-moment';
 import * as chaiUUID from 'chai-uuid';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import { SinonSpy, SinonStub } from 'sinon';
+import { SinonStub } from 'sinon';
 
 /* Nest */
 import { Repository } from 'typeorm';
@@ -22,6 +22,8 @@ import * as jwt from 'jsonwebtoken';
 import { SessionService } from '../session.service';
 import { Member } from '../../members/members.entity';
 import { Session } from '../session.entity';
+
+/* API Test dependancies */
 import { mockSession, mockSessionTokens } from './session.test-helpers';
 import { mockMember, mockMemberTextPass } from '../../members/tests/members.test-helpers';
 
@@ -812,13 +814,15 @@ describe('SessionService', () => {
             process.env.JWT_SECRET = 'ABC';
             process.env.JWT_ISSUER = 'XYZ';
 
-            const payload = { exp: moment().add(1, 'hour').unix() };
+            const payload = {
+                exp: moment().add(1, 'hour').unix(),
+                scope: 'access',
+            };
 
             const options = {
                 issuer: process.env.JWT_ISSUER,
                 jwtid: 'mockToken',
                 keyid: 'mockSessionId',
-                subject: 'access',
             };
 
             token = await jwt.sign(payload, process.env.JWT_SECRET, options);
@@ -845,7 +849,7 @@ describe('SessionService', () => {
                 expect(result.token).to.be.string('mockToken');
             });
 
-            it('should return \'sub\' as type', () => {
+            it('should return \'scope\' as type', () => {
                 expect(result.type).to.be.string('access');
             });
         });

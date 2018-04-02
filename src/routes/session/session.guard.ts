@@ -24,10 +24,9 @@ export class SessionGuard implements CanActivate {
 
     async canActivate(req, context: ExecutionContext): Promise<boolean> {
         const { handler } = context;
-        const required = this.reflector.get<boolean>('required', handler);
-        const tokenType = this.reflector.get<boolean>('tokenType', handler);
+        const requiredTokenType = this.reflector.get<string>('tokenType', handler);
 
-        if (!required) return true;
+        if (!requiredTokenType) return true;
 
         const jwt: string = SessionService.getTokenFromHeaders(req.headers);
         const parsedToken = await SessionService.verifyAndDecodeToken(jwt);
@@ -40,7 +39,7 @@ export class SessionGuard implements CanActivate {
             type,
         } = parsedToken;
 
-        if (tokenType && tokenType !== type) throw new BadRequestException(INCORRECT_TOKEN_TYPE);
+        if (requiredTokenType && requiredTokenType !== type) throw new BadRequestException(INCORRECT_TOKEN_TYPE);
 
         const cookie: string = req.cookies['CSRF-TOKEN'];
 
