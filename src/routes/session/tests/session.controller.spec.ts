@@ -110,65 +110,65 @@ describe('SessionController', () => {
                 expect(result).not.to.contain.key('cookieToken');
             });
         });
-    });
 
-    describe('when the service returns null', () => {
-        let sessionServiceLoginSpy: SinonSpy;
-        let resCookieSpy: SinonSpy;
-        let result: SessionTokenResponse;
-        let req: Request;
-        let caughtError: any;
+        describe('when the service returns null', () => {
+            let sessionServiceLoginSpy: SinonSpy;
+            let resCookieSpy: SinonSpy;
+            let result: SessionTokenResponse;
+            let req: Request;
+            let caughtError: any;
 
-        before(async () => {
-            const credentials: SessionRequest = {
-                email: 'valid@email.com',
-                password: 'validPass1',
-            };
+            before(async () => {
+                const credentials: SessionRequest = {
+                    email: 'valid@email.com',
+                    password: 'validPass1',
+                };
 
-            const spyResponse: SessionTokens = null;
+                const spyResponse: SessionTokens = null;
 
-            req = {
-                res: {
-                    cookie: () => {},
-                },
-            };
+                req = {
+                    res: {
+                        cookie: () => {},
+                    },
+                };
 
-            sessionServiceLoginSpy = sinon
-                .stub(sessionService, 'loginWithPassword')
-                .resolves(spyResponse);
+                sessionServiceLoginSpy = sinon
+                    .stub(sessionService, 'loginWithPassword')
+                    .resolves(spyResponse);
 
-            resCookieSpy = sinon.spy(req.res, 'cookie');
+                resCookieSpy = sinon.spy(req.res, 'cookie');
 
-            try {
-                result = await sessionController.login(req, credentials);
-            } catch (error) {
-                caughtError = error;
-            }
-        });
+                try {
+                    result = await sessionController.login(req, credentials);
+                } catch (error) {
+                    caughtError = error;
+                }
+            });
 
-        after(() => {
-            sessionServiceLoginSpy.restore();
-            resCookieSpy.restore();
-        });
+            after(() => {
+                sessionServiceLoginSpy.restore();
+                resCookieSpy.restore();
+            });
 
-        it('should call the session service', () => {
-            expect(sessionServiceLoginSpy).to.have.been.called;
-        });
+            it('should call the session service', () => {
+                expect(sessionServiceLoginSpy).to.have.been.called;
+            });
 
-        it('should not a cookie to the response', () => {
-            expect(resCookieSpy).to.not.have.been.called;
-        });
+            it('should not a cookie to the response', () => {
+                expect(resCookieSpy).to.not.have.been.called;
+            });
 
-        it('should throw an UnauthorizedException', () => {
-            expect(caughtError instanceof UnauthorizedException).to.be.true;
-        });
+            it('should throw an UnauthorizedException', () => {
+                expect(caughtError instanceof UnauthorizedException).to.be.true;
+            });
 
-        it('should return a 401 status', () => {
-            expect(caughtError.response.statusCode).to.be.equal(401);
-        });
+            it('should return a 401 status', () => {
+                expect(caughtError.response.statusCode).to.be.equal(401);
+            });
 
-        it('should return a message of Invalid \'Credentials\'', () => {
-            expect(caughtError.response.message).to.be.string('Invalid Credentials');
+            it('should return a message of Invalid \'Credentials\'', () => {
+                expect(caughtError.response.message).to.be.string('Invalid Credentials');
+            });
         });
     });
 });

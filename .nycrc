@@ -9,7 +9,8 @@
   ],
   "exclude": [
     "**/*.spec.ts",
-    "**/*.entity.ts"
+    "**/*.entity.ts",
+    "**/*.test-helpers.ts"
   ],
   "reporter": [
     "lcov",

@@ -7,12 +7,9 @@ import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
 import * as uuid from 'uuid/v4';
 
-import { Member } from '../members/models/members.entity';
+import { Member } from '../members/members.entity';
 import { Session } from './session.entity';
 import { SessionTokens } from './session.interfaces';
-
-// todo: make env var
-const secret = 'xxx';
 
 @Component()
 export class SessionService {
@@ -31,45 +28,45 @@ export class SessionService {
     }
 
     private static generateRefreshExpiry(): Date {
-        return moment().add(7, 'days').toDate();
+        return moment().add(process.env.JWT_REFRESH_HOURS, 'hours').toDate();
     }
 
-    private static generateSessionTokens(session: Session): SessionTokens {
+    private static async generateSessionTokens(session: Session): Promise<SessionTokens> {
         return {
-            accessToken: SessionService.generateToken('access', session),
-            refreshToken: SessionService.generateToken('refresh', session),
+            accessToken: await SessionService.generateToken('access', session),
+            refreshToken: await SessionService.generateToken('refresh', session),
             cookieToken: session.cookie,
         };
     }
 
-    private static generateToken(type: 'access' | 'refresh', session: Session): string {
+    public static async generateToken(type: 'access' | 'refresh', session: Session): Promise<string> {
         let exp: number;
 
         switch (type) {
             case 'access':
-                exp = moment().add(1, 'hour').unix();
+                exp = moment().add(process.env.JWT_ACCESS_HOURS, 'hours').unix();
                 break;
             case 'refresh':
                 exp = Math.floor(session.expiry.getTime() / 1000);
                 break;
         }
 
-        const payload = { exp };
+        const payload = { exp, scope: type };
 
         const options = {
-            issuer: 'WHHC',
+            issuer: process.env.JWT_ISSUER,
             jwtid: (type === 'access') ? session.access : session.refresh,
             keyid: session.id,
-            subject: type,
-            algorithm: 'HS256',
         };
 
-        return jwt.sign(payload, secret, options);
+        return await jwt.sign(payload, process.env.JWT_SECRET, options);
     }
 
-    public static getTokenFromHeader(header: string): string {
-        return (/^Bearer [^ ]+$/.test(header))
-            ? header.split(' ')[1]
+    public static getTokenFromHeaders(headers: { [key: string]: string }): string {
+        const authHeader = headers.authorization;
+
+        return (/^Bearer [^ ]+$/.test(authHeader))
+            ? authHeader.split(' ')[1]
             : null;
     }
 
@@ -102,17 +99,19 @@ export class SessionService {
     public async refreshTokens(sessionId: string) {
         let session: Session = await this.sessionRepository.findOneById(sessionId);
 
+        if (!session) return null;
+
         session.access = await SessionService.generateHash(sessionId);
         session.refresh = await SessionService.generateHash(sessionId);
         session.expiry = SessionService.generateRefreshExpiry();
 
         session = await this.sessionRepository.save(session);
 
-        return SessionService.generateSessionTokens(session);
+        return await SessionService.generateSessionTokens(session);
     }
 
-    public async revokeSession(sessionId: string) {
-        return await this.sessionRepository.removeById(sessionId);
+    public removeSession(sessionId: string): void {
+        this.sessionRepository.removeById(sessionId);
     }
 
     public async validateSession(id: string, type: string, token: string, cookie: string) {
@@ -122,37 +121,37 @@ export class SessionService {
             hasValidId: false,
             hasValidToken: false,
             hasValidCookie: false,
-            isValidSession: true,
+            isValidSession: false,
             memberId: null,
         };
 
         if (session) {
+
             response.hasValidId = true;
             response.hasValidToken = token === session[type];
             response.hasValidCookie = cookie === session.cookie;
-
             response.isValidSession = response.hasValidId && response.hasValidToken && response.hasValidCookie;
 
             response.memberId = session.member;
+
         }
 
         return response;
     }
 
-    public static verifyAndDecodeToken(token: string) { // todo: add type
+    public static async verifyAndDecodeToken(token: string) { // todo: add type
 
         const options = {
-            issuer: 'WHHC',
-            algorithms: 'HS256',
+            issuer: process.env.JWT_ISSUER,
         };
 
         try {
-            jwt.verify(token, secret, options);
+            jwt.verify(token, process.env.JWT_SECRET, options);
         } catch (e) {
             return null;
         }
 
-        const decoded = jwt.decode(token, { complete: true });
+        const decoded = await jwt.decode(token, { complete: true });
 
         return {
             sessionId: decoded.header.kid,

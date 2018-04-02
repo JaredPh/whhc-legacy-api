@@ -5,7 +5,7 @@ import { SessionController } from './session.controller';
 import { SessionService } from './session.service';
 
 import { MembersModule } from '../members/members.module';
-import { Member } from '../members/models/members.entity';
+import { Member } from '../members/members.entity';
 import { Session } from './session.entity';
 
 @Module({

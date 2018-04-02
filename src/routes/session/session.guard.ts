@@ -29,8 +29,8 @@ export class SessionGuard implements CanActivate {
 
         if (!required) return true;
 
-        const jwt: string = SessionService.getTokenFromHeader(req.headers.authorization);
-        const parsedToken = SessionService.verifyAndDecodeToken(jwt);
+        const jwt: string = SessionService.getTokenFromHeaders(req.headers);
+        const parsedToken = await SessionService.verifyAndDecodeToken(jwt);
 
         if (!parsedToken) throw new BadRequestException(AUTH_HEADER_MISSING);
 
@@ -46,10 +46,9 @@ export class SessionGuard implements CanActivate {
 
         const session = await this.sessionService.validateSession(sessionId, type, token, cookie);
 
-        if (session.hasValidId && !session.isValidSession) {
-            this.sessionService.revokeSession(sessionId)
-            throw new UnauthorizedException(INVALID_SESSION_TOKENS);
-        }
+        if (session.hasValidId && !session.isValidSession) this.sessionService.removeSession(sessionId);
+
+        if (!session.isValidSession) throw new UnauthorizedException(INVALID_SESSION_TOKENS);
 
         req.session = {
             id: sessionId,

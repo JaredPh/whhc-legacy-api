@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MembersController } from './members.controller';
 import { MembersService } from './members.service';
-import { Member } from './models/members.entity';
+import { Member } from './members.entity';
 
 @Module({
     controllers: [

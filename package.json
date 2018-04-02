@@ -21,6 +21,7 @@
     "bcrypt": "^1.0.3",
     "compression": "^1.7.1",
     "cookie-parser": "^1.4.3",
+    "dotenv-safe": "^5.0.1",
     "helmet": "^3.10.0",
     "jsonwebtoken": "^8.2.0",
     "moment": "^2.21.0",

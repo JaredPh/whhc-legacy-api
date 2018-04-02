@@ -5,6 +5,9 @@ import * as express from 'express';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import * as helmet from 'helmet';
+import * as dotEnv from 'dotenv-safe';
+
+dotEnv.config();
 
 const instance = express();
 instance.use(compression());

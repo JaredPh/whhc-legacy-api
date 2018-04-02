@@ -2,7 +2,7 @@ import { Component } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Member } from './models/members.entity';
+import { Member } from './members.entity';
 
 @Component()
 export class MembersService {
