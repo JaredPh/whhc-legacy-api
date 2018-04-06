@@ -2,13 +2,13 @@ import { Component } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Member } from './members.entity';
+import { EMember } from './members.entity';
 
 @Component()
 export class MembersService {
 
     constructor(
-        @InjectRepository(Member)
-    private readonly membersRepository: Repository<Member>,
+        @InjectRepository(EMember)
+    private readonly membersRepository: Repository<EMember>,
     ) {}
 }

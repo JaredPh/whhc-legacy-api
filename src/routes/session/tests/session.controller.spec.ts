@@ -15,7 +15,7 @@ import { UnauthorizedException } from '@nestjs/common';
 /* API dependancies */
 import { SessionController } from '../session.controller';
 import { SessionRequest } from '../session.models';
-import { SessionTokenResponse, SessionTokens } from '../session.interfaces';
+import { ISessionTokenResponse, ISessionTokens } from '../session.interfaces';
 
 /* API Test dependancies */
 import { mockSession, mockSessionTokens } from './session.test-helpers';
@@ -55,7 +55,7 @@ describe('SessionController', () => {
         describe('when the service returns loginTokens', () => {
             let sessionServiceLoginSpy: SinonSpy;
             let resCookieSpy: SinonSpy;
-            let result: SessionTokenResponse;
+            let result: ISessionTokenResponse;
             let req: Request;
 
             before(async () => {
@@ -84,7 +84,7 @@ describe('SessionController', () => {
                 resCookieSpy.restore();
             });
 
-            it('should call the session service', () => {
+            it('should call the sessionId service', () => {
                 expect(sessionServiceLoginSpy).to.have.been.called;
             });
 
@@ -112,7 +112,7 @@ describe('SessionController', () => {
         describe('when the service returns null', () => {
             let sessionServiceLoginStub: SinonSpy;
             let resCookieSpy: SinonSpy;
-            let result: SessionTokenResponse;
+            let result: ISessionTokenResponse;
             let req: Request;
             let caughtError: any;
 
@@ -122,7 +122,7 @@ describe('SessionController', () => {
                     password: 'validPass1',
                 };
 
-                const stubResponse: SessionTokens = null;
+                const stubResponse: ISessionTokens = null;
 
                 req = {
                     res: {
@@ -148,7 +148,7 @@ describe('SessionController', () => {
                 resCookieSpy.restore();
             });
 
-            it('should call the session service', () => {
+            it('should call the sessionId service', () => {
                 expect(sessionServiceLoginStub).to.have.been.called;
             });
 
@@ -172,7 +172,7 @@ describe('SessionController', () => {
 
     describe('refresh()', () => {
         let sessionServiceRefeshTokenStub: SinonStub;
-        let result: SessionTokenResponse;
+        let result: ISessionTokenResponse;
 
         before(async () => {
 
@@ -187,7 +187,7 @@ describe('SessionController', () => {
             sessionServiceRefeshTokenStub.restore();
         });
 
-        it('should call the session service', () => {
+        it('should call the sessionId service', () => {
             expect(sessionServiceRefeshTokenStub).to.have.been.called;
         });
 

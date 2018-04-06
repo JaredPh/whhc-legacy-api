@@ -7,40 +7,30 @@ import {
     Request,
     Session,
     UnauthorizedException,
-    UseGuards,
     ValidationPipe,
 } from '@nestjs/common';
 
 import { SessionService } from './session.service';
 
 import { SessionRequest } from './session.models';
-import { SessionTokenResponse } from './session.interfaces';
+import { ISessionTokenResponse } from './session.interfaces';
 import { Authorise } from './session.decorators';
-import { SessionGuard } from './session.guard';
 
-import { INVALID_CREDENTIALS } from '../../utils/errors/error.messages';
+import { errorMessages } from '../../utils/errors/error.messages';
+import { ESession } from './session.entity';
 
 @Controller('session')
-@UseGuards(SessionGuard)
 export class SessionController {
 
-    /**
-     * @todo Istanbul - remove any when branch bug is resolved
-     * @see https://github.com/istanbuljs/istanbuljs/issues/70
-     */
     constructor(
-        @Inject(SessionService) private readonly sessionService: SessionService | any,
+        @Inject(SessionService) private readonly sessionService: SessionService,
     ) {}
 
-    /**
-     * @todo Istanbul - remove any when branch bug is resolved
-     * @see https://github.com/istanbuljs/istanbuljs/issues/70
-     */
     @Post()
     async login(
         @Request() req: any,
         @Body(new ValidationPipe()) loginRequest: SessionRequest,
-    ): Promise<SessionTokenResponse> {
+    ): Promise<ISessionTokenResponse> {
         const {
             email,
             password,
@@ -48,7 +38,7 @@ export class SessionController {
 
         const loginResult = await this.sessionService.loginWithPassword(email, password);
 
-        if (!loginResult) throw new UnauthorizedException(INVALID_CREDENTIALS);
+        if (!loginResult) throw new UnauthorizedException(errorMessages.INVALID_CREDENTIALS);
 
         const {
             accessToken,
@@ -66,15 +56,16 @@ export class SessionController {
     }
 
     @Get()
+
     @Authorise('refresh')
     async refresh(
-        @Session() session: any, // todo: add type
-    ): Promise<SessionTokenResponse> {
+        @Session() session: ESession,
+    ): Promise<ISessionTokenResponse> {
 
         const {
             accessToken,
             refreshToken,
-        } = await this.sessionService.refreshTokens(session.id);
+        } = await this.sessionService.refreshTokens(session);
 
         return {
             accessToken,

@@ -5,8 +5,9 @@ import { SessionController } from './session.controller';
 import { SessionService } from './session.service';
 
 import { MembersModule } from '../members/members.module';
-import { Member } from '../members/members.entity';
-import { Session } from './session.entity';
+import { EMember } from '../members/members.entity';
+import { ESession } from './session.entity';
+import { SessionGuard } from './session.guard';
 
 @Module({
     controllers: [
@@ -14,10 +15,11 @@ import { Session } from './session.entity';
     ],
     imports: [
         MembersModule,
-        TypeOrmModule.forFeature([Member, Session]),
+        TypeOrmModule.forFeature([EMember, ESession]),
     ],
     components: [
         SessionService,
+        SessionGuard,
     ],
 })
 export class SessionModule {}

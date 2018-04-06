@@ -1,6 +1,5 @@
 /* Nest Testing */
 import { Test } from '@nestjs/testing';
-import { TestingModule } from '@nestjs/testing/testing-module';
 
 /* Chai and chai addons */
 import * as chai from 'chai';
@@ -20,11 +19,11 @@ import * as jwt from 'jsonwebtoken';
 
 /* API dependancies */
 import { SessionService } from '../session.service';
-import { Member } from '../../members/members.entity';
-import { Session } from '../session.entity';
+import { EMember } from '../../members/members.entity';
+import { ESession } from '../session.entity';
 
 /* API Test dependancies */
-import { mockSession, mockSessionTokens } from './session.test-helpers';
+import { mockJwtTokens, mockJwtSecret, mockSession, mockJwtIssuer } from './session.test-helpers';
 import { mockMember, mockMemberTextPass } from '../../members/tests/members.test-helpers';
 
 chai.use(chaiJWT);
@@ -34,285 +33,299 @@ chai.use(sinonChai);
 
 const expect = chai.expect;
 
-class MemberRepository extends Repository<Member> {
+class EMemberRepository extends Repository<EMember> {
     findOne() {}
 }
 
-class SessionRepository extends Repository<Session> {
+class ESessionRepository extends Repository<ESession> {
     save() {}
     findOnebyId() {}
     removeById() {}
 }
 
 describe('SessionService', () => {
-    let memberRepository: MemberRepository;
-    let sessionRepository: SessionRepository;
+    let memberRepository: EMemberRepository;
+    let sessionRepository: ESessionRepository;
+
     let sessionService: SessionService;
 
-    before(async () => {
-        const module: TestingModule = await Test.createTestingModule({
+    before( async () => {
+
+        process.env.JWT_ISSUER = mockJwtIssuer;
+        process.env.JWT_SECRET = mockJwtSecret;
+        process.env.JWT_ACCESS_HOURS = 12;
+        process.env.JWT_REFRESH_HOURS = 123;
+
+        const module = await Test.createTestingModule({
             components: [
                 SessionService,
                 {
-                    provide: 'SessionRepository',
-                    useClass: SessionRepository,
+                    provide: 'ESessionRepository',
+                    useClass: ESessionRepository,
                 },
                 {
-                    provide: 'MemberRepository',
-                    useClass: MemberRepository,
+                    provide: 'EMemberRepository',
+                    useClass: EMemberRepository,
                 },
             ],
         }).compile();
 
-        memberRepository = module.get<MemberRepository>(MemberRepository);
-        sessionRepository = module.get<SessionRepository>(SessionRepository);
+        memberRepository = module.get<EMemberRepository>(EMemberRepository);
+        sessionRepository = module.get<ESessionRepository>(ESessionRepository);
 
         sessionService = module.get<SessionService>(SessionService);
     });
 
-    describe('generateHash()', () => {
-        const hashes: string[] = [];
-
-        before(async () => {
-            for (let i = 0; i < 50; i += 1) {
-                hashes.push(await SessionService.generateHash('testString'));
-            }
-        });
-
-        it('should generate 53 character hashes', () => {
-            hashes.forEach((hash) => {
-                expect(hash).to.have.length(53);
-            });
-        });
-
-        it('should return a different hash each time', () => {
-            hashes.forEach((hash) => {
-                const count = hashes.reduce((acc, curr) => (curr === hash) ? acc + 1 : acc, 0);
-                expect(count).to.be.equal(1);
-            });
-        });
-    });
-
-    describe('generateRefreshExpiry()', () => {
-        it('should return an expiry datae using env var', () => {
-            process.env.JWT_REFRESH_HOURS = 100;
-
-            const result = SessionService.generateRefreshExpiry();
-            const expected = moment().add(process.env.JWT_REFRESH_HOURS, 'hours').toDate();
-
-            expect(result).to.be.sameMoment(expected, 'second');
-        });
-    });
-
-    describe('generateSessionTokens()', () => {
-
-        let generateTokenStub: SinonStub;
-
-        let result: any;
-
-        before(async () => {
-            generateTokenStub = sinon.stub(SessionService, 'generateToken');
-
-            generateTokenStub.onCall(0).resolves(mockSessionTokens.accessToken);
-            generateTokenStub.onCall(1).resolves(mockSessionTokens.refreshToken);
-
-            result = await SessionService.generateSessionTokens(mockSession);
-        });
-
-        after(() => {
-            generateTokenStub.restore();
-        });
-
-        it('should call generateToken method', () => {
-            expect(generateTokenStub).to.have.been.called;
-            expect(generateTokenStub.callCount).to.be.equal(2);
-        });
-
-        it('should return an access token', () => {
-            expect(result.accessToken).to.be.string(mockSessionTokens.accessToken);
-        });
-
-        it('should return a refresh token', () => {
-            expect(result.refreshToken).to.be.string(mockSessionTokens.refreshToken);
-        });
-
-        it('should return a cookie token', () => {
-            expect(result.cookieToken).to.be.string(mockSession.cookie);
-        });
-    });
-
-    describe('generateToken()', () => {
-        describe('using access token', () => {
-
-            let result: any;
-            let decoded: any;
-
-            before(async () => {
-                process.env.JWT_ACCESS_HOURS = 1;
-                process.env.JWT_ISSUER = 'MOCKISS';
-                process.env.JWT_SECRET = 'XYZ';
-
-                result = await SessionService.generateToken('access', mockSession);
-
-                decoded = await jwt.decode(result, { complete: true });
-            });
-
-            it('should return a jwt', () => {
-                expect(result).to.be.a.jwt;
-            });
-
-            it('should be signed with the secret', () => {
-                expect(result).to.be.signedWith(process.env.JWT_SECRET);
-            });
-
-            it('should have session id in the jwt header', () => {
-                expect(decoded.header.kid).to.be.string(mockSession.id);
-            });
-
-            it('should have scope in the jwt payload', () => {
-                expect(decoded.payload.scope).to.be.string('access');
-            });
-
-            it('should have iss in the jwt payload', () => {
-                expect(decoded.payload.iss).to.be.string(process.env.JWT_ISSUER);
-            });
-
-            it('should have jti in the jwt payload', () => {
-                expect(decoded.payload.jti).to.be.string(mockSession.access);
-            });
-
-            it('should have exp in the jwt payload', () => {
-                const expiry = moment().add(process.env.JWT_ACCESS_HOURS, 'hours').unix();
-                expect(decoded.payload.exp).to.be.equal(expiry);
-            });
-        });
-
-        describe('using refresh token', () => {
-
-            let result: any;
-            let decoded: any;
-
-            before(async () => {
-                process.env.JWT_ISSUER = 'MOCKISS';
-                process.env.JWT_SECRET = 'ABC';
-
-                result = await SessionService.generateToken('refresh', mockSession);
-
-                decoded = await jwt.decode(result, { complete: true });
-            });
-
-            it('should return a jwt', () => {
-                expect(result).to.be.a.jwt;
-            });
-
-            it('should be signed with the secret', () => {
-                expect(result).to.be.signedWith(process.env.JWT_SECRET);
-            });
-
-            it('should have session id in the jwt header', () => {
-                expect(decoded.header.kid).to.be.string(mockSession.id);
-            });
-
-            it('should have scope in the jwt payload', () => {
-                expect(decoded.payload.scope).to.be.string('refresh');
-            });
-
-            it('should have iss in the jwt payload', () => {
-                expect(decoded.payload.iss).to.be.string(process.env.JWT_ISSUER);
-            });
-
-            it('should have jti in the jwt payload', () => {
-                expect(decoded.payload.jti).to.be.string(mockSession.refresh);
-            });
-
-            it('should have exp in the jwt payload', () => {
-                const expiry = moment(mockSession.expiry).unix();
-                expect(decoded.payload.exp).to.be.equal(expiry);
-            });
-        });
-    });
-
-    describe('getTokenFromHeaders', () => {
-
-        let result: any;
-
-        describe('with a valid authorization header', () => {
-
-            let mockHeaders: { [key: string]: string };
-
-            before(() => {
-                mockHeaders = {
-                    'content-type': 'application/json',
-                    authorization: `Bearer ${mockSessionTokens.accessToken}`,
-                };
-
-                result = SessionService.getTokenFromHeaders(mockHeaders);
-            });
-
-            it('should return the jwt', () => {
-                expect(result).to.be.string(mockSessionTokens.accessToken);
-            });
-        });
-
-        describe('with an invalid authorization header', () => {
-
-            let mockHeaders: { [key: string]: string };
-
-            before(() => {
-                mockHeaders = {
-                    'content-type': 'application/json',
-                    authorization: `Basic ${mockSessionTokens.accessToken}`,
-                };
-
-                result = SessionService.getTokenFromHeaders(mockHeaders);
-            });
-
-            it('should return null', () => {
-                expect(result).to.be.null;
-            });
-        });
-
+    describe('loadSession()', () => {
         describe('with no authorization header', () => {
+            let mockRequest: any;
+            let sessionRepositoryFindOneByIdStub: SinonStub;
+            let result: any;
 
-            let mockHeaders: { [key: string]: string };
-
-            before(() => {
-                mockHeaders = {
-                    'content-type': 'application/json',
+            before(async () => {
+                mockRequest = {
+                    headers: {},
+                    cookies: {
+                        'CSRF-TOKEN': mockSession.cookie,
+                    },
                 };
 
-                result = SessionService.getTokenFromHeaders(mockHeaders);
+                sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').resolves(mockSession);
+
+                result = await sessionService.loadSession(mockRequest);
             });
 
-            it('should return null', () => {
-                expect(result).to.be.null;
+            after(() => {
+                sessionRepositoryFindOneByIdStub.restore();
+            });
+
+            it('should not call the session repository', () => {
+                expect(sessionRepositoryFindOneByIdStub).to.not.be.called;
+            });
+
+            it('should return an object with \'session\' and \'token\'', () => {
+                expect(result).to.have.all.keys(['session', 'token']);
+            });
+
+            it('should return session as null', () => {
+                expect(result.session).to.be.null;
+            });
+
+            it('should return token with \'verified\' and  \'type\'', () => {
+                expect(result.token).to.have.all.keys(['verified', 'type']);
+            });
+
+            it('should return token with verified as undefined', () => {
+                expect(result.token.verified).to.be.undefined;
+            });
+
+            it('should return token with type as access', () => {
+                expect(result.token.type).to.be.string('invalid');
+            });
+        });
+
+        describe('with an unreadable token', () => {
+            let mockRequest: any;
+            let sessionRepositoryFindOneByIdStub: SinonStub;
+            let result: any;
+
+            before(async () => {
+                const token = mockJwtTokens.accessToken;
+
+                mockRequest = {
+                    headers: {
+                        authorization: `Bearer abc${token}`,
+                    },
+                    cookies: {
+                        'CSRF-TOKEN': mockSession.cookie,
+                    },
+                };
+
+                sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').resolves(mockSession);
+
+                result = await sessionService.loadSession(mockRequest);
+            });
+
+            after(() => {
+                sessionRepositoryFindOneByIdStub.restore();
+            });
+
+            it('should return an object with \'session\' and \'token\'', () => {
+                expect(result).to.have.all.keys(['session', 'token']);
+            });
+
+            it('should return session as null', () => {
+                expect(result.session).to.be.null;
+            });
+
+            it('should return token with \'verified\' and  \'type\'', () => {
+                expect(result.token).to.have.all.keys(['verified', 'type']);
+            });
+
+            it('should return token with verified as false', () => {
+                expect(result.token.verified).to.be.false;
+            });
+
+            it('should return token with type as null', () => {
+                expect(result.token.type).to.be.null;
+            });
+        });
+
+        describe('with a tampered token', () => {
+            let mockRequest: any;
+            let sessionRepositoryFindOneByIdStub: SinonStub;
+            before(async () => {
+                const token = mockJwtTokens.accessToken;
+
+                mockRequest = {
+                    headers: {
+                        authorization: `Bearer ${token}xyz`,
+                    },
+                    cookies: {
+                        'CSRF-TOKEN': mockSession.cookie,
+                    },
+                };
+
+                sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').resolves(mockSession);
+
+                result = await sessionService.loadSession(mockRequest);
+            });
+
+            let result: any;
+
+            after(() => {
+                sessionRepositoryFindOneByIdStub.restore();
+            });
+
+            it('should return an object with \'session\' and \'token\'', () => {
+                expect(result).to.have.all.keys(['session', 'token']);
+            });
+
+            it('should return a valid session', () => {
+                expect(result.session).to.deep.equal(mockSession);
+            });
+
+            it('should return token with \'verified\' and  \'type\'', () => {
+                expect(result.token).to.have.all.keys(['verified', 'type']);
+            });
+
+            it('should return token with verified as false', () => {
+                expect(result.token.verified).to.be.false;
+            });
+
+            it('should return token with type as access', () => {
+                expect(result.token.type).to.be.string('access');
+            });
+        });
+
+        describe('with a valid accessToken', () => {
+            let mockRequest: any;
+            let sessionRepositoryFindOneByIdStub: SinonStub;
+            let result: any;
+
+            before(async () => {
+                const token = mockJwtTokens.accessToken;
+
+                mockRequest = {
+                    headers: {
+                        authorization: `Bearer ${token}`,
+                    },
+                    cookies: {
+                        'CSRF-TOKEN': mockSession.cookie,
+                    },
+                };
+
+                sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').resolves(mockSession);
+
+                result = await sessionService.loadSession(mockRequest);
+            });
+
+            after(() => {
+                sessionRepositoryFindOneByIdStub.restore();
+            });
+
+            it('should return an object with \'session\' and \'token\'', () => {
+                expect(result).to.have.all.keys(['session', 'token']);
+            });
+
+            it('should return a valid session', () => {
+                expect(result.session).to.deep.equal(mockSession);
+            });
+
+            it('should return token with \'verified\' and  \'type\'', () => {
+                expect(result.token).to.have.all.keys(['verified', 'type']);
+            });
+
+            it('should return token with verified as true', () => {
+                expect(result.token.verified).to.be.true;
+            });
+
+            it('should return token with type as access', () => {
+                expect(result.token.type).to.be.string('access');
+            });
+        });
+
+        describe('with a valid refreshToken', () => {
+            let mockRequest: any;
+            let sessionRepositoryFindOneByIdStub: SinonStub;
+            let result: any;
+
+            before(async () => {
+                const token = mockJwtTokens.refreshToken;
+
+                mockRequest = {
+                    headers: {
+                        authorization: `Bearer ${token}`,
+                    },
+                    cookies: {
+                        'CSRF-TOKEN': mockSession.cookie,
+                    },
+                };
+
+                sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').resolves(mockSession);
+
+                result = await sessionService.loadSession(mockRequest);
+            });
+
+            after(() => {
+                sessionRepositoryFindOneByIdStub.restore();
+            });
+
+            it('should return an object with \'session\' and \'token\'', () => {
+                expect(result).to.have.all.keys(['session', 'token']);
+            });
+
+            it('should return a valid session', () => {
+                expect(result.session).to.deep.equal(mockSession);
+            });
+
+            it('should return token with \'verified\' and  \'type\'', () => {
+                expect(result.token).to.have.all.keys(['verified', 'type']);
+            });
+
+            it('should return token with verified as true', () => {
+                expect(result.token.verified).to.be.true;
+            });
+
+            it('should return token with type as access', () => {
+                expect(result.token.type).to.be.string('refresh');
             });
         });
     });
 
-    describe('loginWithPassword', () => {
-
-        let generateHashStub: SinonStub;
-        let generateRefreshExpiryStub: SinonStub;
-        let generateSessionTokensStub: SinonStub;
-        let memberRepositoryFindOneStub: SinonStub;
-        let sessionRepositorySaveStub: SinonStub;
+    // todo: test for jwt exp
+    describe('loginWithPassword()', () => {
 
         describe('using a valid email and password', () => {
             let result;
             let mockExpiryDate;
 
+            let memberRepositoryFindOneStub: sinonStub;
+            let sessionRepositorySaveStub: sinonStub;
+
             before(async () => {
                 mockExpiryDate = mockSession.expiry;
 
-                generateHashStub = sinon.stub(SessionService, 'generateHash');
-
-                generateHashStub.onCall(0).resolves('mockHash0');
-                generateHashStub.onCall(1).resolves('mockHash1');
-                generateHashStub.onCall(2).resolves('mockHash2');
-
-                generateRefreshExpiryStub = sinon.stub(SessionService, 'generateRefreshExpiry').returns(mockExpiryDate);
-                generateSessionTokensStub = sinon.stub(SessionService, 'generateSessionTokens').returns(mockSessionTokens);
                 memberRepositoryFindOneStub = sinon.stub(memberRepository, 'findOne').resolves(mockMember);
                 sessionRepositorySaveStub = sinon.stub(sessionRepository, 'save').returnsArg(0);
 
@@ -320,151 +333,151 @@ describe('SessionService', () => {
             });
 
             after(() => {
-                generateHashStub.restore();
-                generateRefreshExpiryStub.restore();
-                generateSessionTokensStub.restore();
                 memberRepositoryFindOneStub.restore();
                 sessionRepositorySaveStub.restore();
             });
 
-            it('should call generateHash method', () => {
-                expect(generateHashStub).to.have.been.called;
-                expect(generateHashStub.callCount).to.be.equal(3);
+            describe('creating the session', () => {
+
+                it('should call the session repository save method', () => {
+                    expect(sessionRepositorySaveStub).to.have.been.called;
+                });
+
+                it('should generate a sessionId id', () => {
+                    const id = sessionRepositorySaveStub.getCall(0).args[0].id;
+                    expect(id).to.be.a.uuid('v4');
+                });
+
+                it('should create an access token', () => {
+                    const access = sessionRepositorySaveStub.getCall(0).args[0].access;
+
+                    expect(access).to.be.a('string');
+                    expect(access).to.be.length(53);
+                });
+
+                it('should create a access token', () => {
+                    const refresh = sessionRepositorySaveStub.getCall(0).args[0].refresh;
+
+                    expect(refresh).to.be.a('string');
+                    expect(refresh).to.be.length(53);
+                });
+
+                it('should create a cookie token', () => {
+                    const cookie = sessionRepositorySaveStub.getCall(0).args[0].cookie;
+
+                    expect(cookie).to.be.a('string');
+                    expect(cookie).to.be.length(53);
+                });
+
+                it('should generate an expiry', () => {
+                    const expiry = sessionRepositorySaveStub.getCall(0).args[0].expiry;
+                    const expectedExpiry = moment().add(process.env.JWT_REFRESH_HOURS, 'hours').toDate();
+
+                    expect(expiry).to.be.sameMoment(expectedExpiry, 'second');
+                });
             });
 
-            it('should generate a session id', () => {
-                const id = generateHashStub.getCall(0).args[0];
-                expect(id).to.be.a.uuid('v4');
-            });
+            describe('the response', () => {
+                let decodedAccessToken: any;
+                let decodedRefreshToken: any;
 
-            it('should call generateSessionTokens method', () => {
-                expect(generateSessionTokensStub).to.have.been.called;
-                expect(generateSessionTokensStub.callCount).to.be.equal(1);
-            });
+                before(async () => {
+                    decodedAccessToken = await jwt.decode(result.accessToken, { complete: true });
+                    decodedRefreshToken = await jwt.decode(result.refreshToken, { complete: true });
+                });
 
-            it('should call generateRefreshExpiry method', () => {
-                expect(generateRefreshExpiryStub).to.have.been.called;
-                expect(generateRefreshExpiryStub.callCount).to.be.equal(1);
-            });
+                it('should return an object containing \'accessToken\', \'refreshToken\', and \'cookieToken\'', () => {
+                    expect(result).to.have.all.keys(['accessToken', 'refreshToken', 'cookieToken']);
+                });
 
-            it('should call the save method of the session respository', () => {
-                expect(sessionRepositorySaveStub).to.have.been.called;
-                expect(sessionRepositorySaveStub.callCount).to.be.equal(1);
-            });
+                it('should return the accessToken as a jwt', () => {
+                    expect(result.accessToken).to.be.jwt;
+                });
 
-            it('should set the access token saved in the session respository', () => {
-                const token = sessionRepositorySaveStub.getCall(0).args[0].access;
+                it('should return the accessToken with kid equal to sessionId', async () => {
+                    const id = sessionRepositorySaveStub.getCall(0).args[0].id;
 
-                expect(token).to.be.string('mockHash1');
-            });
+                    expect(decodedAccessToken.header.kid).to.be.string(id);
+                });
 
-            it('should set the refresh token saved in the session respository', () => {
-                const token = sessionRepositorySaveStub.getCall(0).args[0].refresh;
+                it('should return the accessToken with scope equal to \'access\'', async () => {
+                    expect(decodedAccessToken.payload.scope).to.be.string('access');
+                });
 
-                expect(token).to.be.string('mockHash2');
-            });
+                it('should return the accessToken with jti equal to session access token', async () => {
+                    const updatedAccess = sessionRepositorySaveStub.getCall(0).args[0].access;
 
-            it('should set the cookie token saved in the session respository', () => {
-                const token = sessionRepositorySaveStub.getCall(0).args[0].cookie;
+                    expect(decodedAccessToken.payload.jti).to.be.string(updatedAccess);
+                });
 
-                expect(token).to.be.string('mockHash0');
-            });
+                it('should return the refreshToken as a jwt', () => {
+                    expect(result.refreshToken).to.be.jwt;
+                });
 
-            it('should set the expiry time saved in the session respository', () => {
-                const expiry = sessionRepositorySaveStub.getCall(0).args[0].expiry;
+                it('should return the refreshToken with kid equal to sessionId', async () => {
+                    const id = sessionRepositorySaveStub.getCall(0).args[0].id;
 
-                expect(expiry.getTime()).to.be.equal(mockExpiryDate.getTime());
-            });
+                    expect(decodedAccessToken.header.kid).to.be.string(id);
+                });
 
-            it('should return an access token', () => {
-                expect(result.accessToken).to.be.string(mockSessionTokens.accessToken);
-            });
+                it('should return the refreshToken with scope equal to \'access\'', async () => {
+                    expect(decodedRefreshToken.payload.scope).to.be.string('refresh');
+                });
 
-            it('should return a refresh token', () => {
-                expect(result.refreshToken).to.be.string(mockSessionTokens.refreshToken);
-            });
+                it('should return the refreshToken with jti equal to session access token', async () => {
+                    const updatedRefresh = sessionRepositorySaveStub.getCall(0).args[0].refresh;
 
-            it('should return a cookie token', () => {
-                expect(result.cookieToken).to.be.string(mockSessionTokens.cookieToken);
+                    expect(decodedRefreshToken.payload.jti).to.be.string(updatedRefresh);
+                });
             });
         });
 
         describe('using an valid email and invalid password', () => {
             let result;
 
-            before(async () => {
-                generateHashStub = sinon.stub(SessionService, 'generateHash');
-                generateRefreshExpiryStub = sinon.stub(SessionService, 'generateRefreshExpiry');
-                generateSessionTokensStub = sinon.stub(SessionService, 'generateSessionTokens');
-                memberRepositoryFindOneStub = sinon.stub(memberRepository, 'findOne').resolves(mockMember);
-                sessionRepositorySaveStub = sinon.stub(sessionRepository, 'save');
+            let memberRepositoryFindOneStub: sinonStub;
+            let sessionRepositorySaveStub: sinonStub;
 
-                result = await sessionService.loginWithPassword(mockMember.email, mockMemberTextPass + 'x');
+            before(async () => {
+                memberRepositoryFindOneStub = sinon.stub(memberRepository, 'findOne').resolves(mockMember);
+                sessionRepositorySaveStub = sinon.stub(sessionRepository, 'save').returnsArg(0);
+
+                result = await sessionService.loginWithPassword(mockMember.email, 'invalidPass1');
             });
 
             after(() => {
-                generateHashStub.restore();
-                generateRefreshExpiryStub.restore();
-                generateSessionTokensStub.restore();
                 memberRepositoryFindOneStub.restore();
                 sessionRepositorySaveStub.restore();
             });
 
-            it('should not call generateHash method', () => {
-                expect(generateHashStub).to.not.have.been.called;
-            });
-
-            it('should call generateSessionTokens method', () => {
-                expect(generateSessionTokensStub).to.not.have.been.called;
-            });
-
-            it('should call generateRefreshExpiry method', () => {
-                expect(generateRefreshExpiryStub).to.not.have.been.called;
-            });
-
-            it('should call the save method of the session respository', () => {
+            it('should not call the session repository save method', () => {
                 expect(sessionRepositorySaveStub).to.not.have.been.called;
             });
 
             it('should return null', () => {
-                expect(result).to.be.null;
+                    expect(result).to.be.null;
             });
         });
 
         describe('using an invalid email and password', () => {
             let result;
 
+            let memberRepositoryFindOneStub: sinonStub;
+            let sessionRepositorySaveStub: sinonStub;
+
             before(async () => {
-                generateHashStub = sinon.stub(SessionService, 'generateHash');
-                generateRefreshExpiryStub = sinon.stub(SessionService, 'generateRefreshExpiry');
-                generateSessionTokensStub = sinon.stub(SessionService, 'generateSessionTokens');
                 memberRepositoryFindOneStub = sinon.stub(memberRepository, 'findOne').resolves(undefined);
                 sessionRepositorySaveStub = sinon.stub(sessionRepository, 'save').returnsArg(0);
 
-                result = await sessionService.loginWithPassword(mockMember.email, mockMemberTextPass);
+                result = await sessionService.loginWithPassword(mockMember.email, 'somePass1');
             });
 
             after(() => {
-                generateHashStub.restore();
-                generateRefreshExpiryStub.restore();
-                generateSessionTokensStub.restore();
                 memberRepositoryFindOneStub.restore();
                 sessionRepositorySaveStub.restore();
             });
 
-            it('should not call generateHash method', () => {
-                expect(generateHashStub).to.not.have.been.called;
-            });
-
-            it('should call generateSessionTokens method', () => {
-                expect(generateSessionTokensStub).to.not.have.been.called;
-            });
-
-            it('should call generateRefreshExpiry method', () => {
-                expect(generateRefreshExpiryStub).to.not.have.been.called;
-            });
-
-            it('should call the save method of the session respository', () => {
+            it('should not call the session repository save method', () => {
                 expect(sessionRepositorySaveStub).to.not.have.been.called;
             });
 
@@ -473,141 +486,108 @@ describe('SessionService', () => {
             });
         });
     });
-
+    // todo: test for jwt exp
     describe('refreshTokens()', () => {
-        let generateHashStub: SinonStub;
-        let generateRefreshExpiryStub: SinonStub;
-        let generateSessionTokensStub: SinonStub;
+        let result: ESession;
         let sessionRepositorySaveStub: SinonStub;
 
-        let mockExpiryDate: Date;
+        const {
+            access,
+            refresh,
+            cookie,
+        } = mockSession;
 
-        let result: any;
-
-        beforeEach(async () => {
-            mockExpiryDate = new Date();
-
+        before(async () => {
             sessionRepositorySaveStub = sinon.stub(sessionRepository, 'save').returnsArg(0);
-
-            generateHashStub = sinon.stub(SessionService, 'generateHash');
-            generateHashStub.onCall(0).resolves('mockHash0');
-            generateHashStub.onCall(1).resolves('mockHash1');
-
-            generateSessionTokensStub  = sinon.stub(SessionService, 'generateSessionTokens').resolves(mockSessionTokens);
-            generateRefreshExpiryStub = sinon.stub(SessionService, 'generateRefreshExpiry').returns(mockExpiryDate);
+            result = await sessionService.refreshTokens(mockSession);
         });
 
-        afterEach(() => {
+        after(() => {
             sessionRepositorySaveStub.restore();
-
-            generateHashStub.restore();
-            generateSessionTokensStub.restore();
-            generateRefreshExpiryStub.restore();
         });
 
-        describe('with a valid session', () => {
-
-            let sessionRepositoryFindOneByIdStub: SinonStub;
-
-            beforeEach(async () => {
-                sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').resolves(mockSession);
-
-                result = await sessionService.refreshTokens(mockSession.id);
-            });
-
-            afterEach(() => {
-                sessionRepositoryFindOneByIdStub.restore();
-            });
-
-            it('should call generateHash method', () => {
-                expect(generateHashStub).to.have.been.called;
-                expect(generateHashStub.callCount).to.be.equal(2);
-            });
-
-            it('should call generateSessionTokens method', () => {
-                expect(generateSessionTokensStub).to.have.been.called;
-                expect(generateSessionTokensStub.callCount).to.be.equal(1);
-            });
-
-            it('should call generateRefreshExpiry method', () => {
-                expect(generateRefreshExpiryStub).to.have.been.called;
-                expect(generateRefreshExpiryStub.callCount).to.be.equal(1);
-            });
-
-            it('should call the save method of the session respository', () => {
+        describe('updating the session', () => {
+            it('should call the session repository save method', () => {
                 expect(sessionRepositorySaveStub).to.have.been.called;
-                expect(sessionRepositorySaveStub.callCount).to.be.equal(1);
             });
 
-            it('should update the access token saved in the session respository', () => {
-                const token = sessionRepositorySaveStub.getCall(0).args[0].access;
+            it('should update the access token', () => {
+                const updatedAccess = sessionRepositorySaveStub.getCall(0).args[0].access;
 
-                expect(token).to.be.string('mockHash0');
+                expect(updatedAccess).to.be.a('string');
+                expect(updatedAccess).to.be.length(53);
+                expect(updatedAccess).not.to.be.string(access);
             });
 
-            it('should update the refresh token saved in the session respository', () => {
-                const token = sessionRepositorySaveStub.getCall(0).args[0].refresh;
+            it('should update the access token', () => {
+                const updatedRefresh = sessionRepositorySaveStub.getCall(0).args[0].refresh;
 
-                expect(token).to.be.string('mockHash1');
+                expect(updatedRefresh).to.be.a('string');
+                expect(updatedRefresh).to.be.length(53);
+                expect(updatedRefresh).not.to.be.string(refresh);
             });
 
-            it('should not update the cookie token saved in the session respository', () => {
-                const token = sessionRepositorySaveStub.getCall(0).args[0].cookie;
+            it('should not update the cookie token', () => {
+                const updatedCookie = sessionRepositorySaveStub.getCall(0).args[0].cookie;
 
-                expect(token).to.be.string(mockSession.cookie);
+                expect(updatedCookie).to.be.string(cookie);
             });
 
-            it('should update the expiry time saved in the session respository', () => {
-                const expiry = sessionRepositorySaveStub.getCall(0).args[0].expiry;
+            it('should extend the expiry', () => {
+                const updatedExpiry = sessionRepositorySaveStub.getCall(0).args[0].expiry;
+                const expectedExpiry = moment().add(process.env.JWT_REFRESH_HOURS, 'hours').toDate();
 
-                expect(expiry.getTime()).to.be.equal(mockExpiryDate.getTime());
-            });
-
-            it('should return an access token', () => {
-                expect(result.accessToken).to.be.string(mockSessionTokens.accessToken);
-            });
-
-            it('should return a refresh token', () => {
-                expect(result.refreshToken).to.be.string(mockSessionTokens.refreshToken);
-            });
-
-            it('should return a cookie token', () => {
-                expect(result.cookieToken).to.be.string(mockSessionTokens.cookieToken);
+                expect(updatedExpiry).to.be.sameMoment(expectedExpiry, 'second');
             });
         });
 
-        describe('with a invalid session', () => {
+        describe('the response', () => {
+            let decodedAccessToken: any;
+            let decodedRefreshToken: any;
 
-            let sessionRepositoryFindOneByIdStub: SinonStub;
-
-            beforeEach(async () => {
-                sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').resolves(undefined);
-
-                result = await sessionService.refreshTokens(undefined);
+            before(async () => {
+                decodedAccessToken = await jwt.decode(result.accessToken, { complete: true });
+                decodedRefreshToken = await jwt.decode(result.refreshToken, { complete: true });
             });
 
-            afterEach(() => {
-                sessionRepositoryFindOneByIdStub.restore();
+            it('should return an object containing \'accessToken\', \'refreshToken\', and \'cookieToken\'', () => {
+                expect(result).to.have.all.keys(['accessToken', 'refreshToken', 'cookieToken']);
             });
 
-            it('should not call generateHash method', () => {
-                expect(generateHashStub).to.not.have.been.called;
+            it('should return the accessToken as a jwt', () => {
+                expect(result.accessToken).to.be.jwt;
             });
 
-            it('should not call generateSessionTokens method', () => {
-                expect(generateSessionTokensStub).to.not.have.been.called;
+            it('should return the accessToken with kid equal to sessionId', async () => {
+                expect(decodedAccessToken.header.kid).to.be.string(mockSession.id);
             });
 
-            it('should not call generateRefreshExpiry method', () => {
-                expect(generateRefreshExpiryStub).to.not.have.been.called;
+            it('should return the accessToken with scope equal to \'access\'', async () => {
+                expect(decodedAccessToken.payload.scope).to.be.string('access');
             });
 
-            it('should not the save method of the session respository', () => {
-                expect(sessionRepositorySaveStub).to.not.have.been.called;
+            it('should return the accessToken with jti equal to session access token', async () => {
+                const updatedAccess = sessionRepositorySaveStub.getCall(0).args[0].access;
+
+                expect(decodedAccessToken.payload.jti).to.be.string(updatedAccess);
             });
 
-            it('should return null', () => {
-                expect(result).to.be.null;
+            it('should return the refreshToken as a jwt', () => {
+                expect(result.refreshToken).to.be.jwt;
+            });
+
+            it('should return the refreshToken with kid equal to sessionId', async () => {
+                expect(decodedRefreshToken.header.kid).to.be.string(mockSession.id);
+            });
+
+            it('should return the refreshToken with scope equal to \'access\'', async () => {
+                expect(decodedRefreshToken.payload.scope).to.be.string('refresh');
+            });
+
+            it('should return the refreshToken with jti equal to session access token', async () => {
+                const updatedRefresh = sessionRepositorySaveStub.getCall(0).args[0].refresh;
+
+                expect(decodedRefreshToken.payload.jti).to.be.string(updatedRefresh);
             });
         });
     });
@@ -624,241 +604,9 @@ describe('SessionService', () => {
            sessionRepositoryRemoveByIdStub.restore();
         });
 
-        it('should call the session repository removeById method', () => {
+        it('should call the sessionId repository removeById method', () => {
             sessionService.removeSession(123);
-
             expect(sessionRepositoryRemoveByIdStub).to.have.been.calledWith(123);
-        });
-    });
-
-    describe('validateSession()', () => {
-
-        let sessionRepositoryFindOneByIdStub: SinonStub;
-
-        const session: Session = mockSession;
-
-        describe('when validating a valid session', () => {
-
-            let result: any; // todo: add type;
-
-            before(async () => {
-                sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').returns(session);
-                result = await sessionService.validateSession(session.id, 'access', session.access, session.cookie);
-            });
-
-            after(() => {
-                sessionRepositoryFindOneByIdStub.restore();
-            });
-
-            it('should return \'hasValidToken\' as true', () => {
-                expect(result.hasValidToken).to.be.true;
-            });
-
-            it('should return \'hasValidId\' as true', () => {
-                expect(result.hasValidId).to.be.true;
-            });
-
-            it('should return \'hasValidCookie\' as true', () => {
-                expect(result.hasValidCookie).to.be.true;
-            });
-
-            it('should return \'isValidSession\' as true', () => {
-                expect(result.isValidSession).to.be.true;
-            });
-
-            it('should return matching \'memberId\'', () => {
-                expect(result.memberId).to.be.equal(session.member);
-            });
-        });
-
-        describe('when validating an invalid session', () => {
-
-            describe('with an incorrect access token', () => {
-                let result: any; // todo: add type;
-
-                before(async () => {
-                    sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').returns(session);
-                    result = await sessionService.validateSession(session.id, 'access', 'invalidToken123', session.cookie);
-                });
-
-                after(() => {
-                    sessionRepositoryFindOneByIdStub.restore();
-                });
-
-                it('should return \'hasValidToken\' as false', () => {
-                    expect(result.hasValidToken).to.be.false;
-                });
-
-                it('should return \'hasValidId\' as true', () => {
-                    expect(result.hasValidId).to.be.true;
-                });
-
-                it('should return \'hasValidCookie\' as true', () => {
-                    expect(result.hasValidCookie).to.be.true;
-                });
-
-                it('should return \'isValidSession\' as false', () => {
-                    expect(result.isValidSession).to.be.false;
-                });
-
-                it('should return matching \'memberId\'', () => {
-                    expect(result.memberId).to.be.equal(session.member);
-                });
-            });
-
-            describe('with an incorrect refresh token', () => {
-                let result: any; // todo: add type;
-
-                before(async () => {
-                    sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').returns(session);
-                    result = await sessionService.validateSession(session.id, 'refresh', 'invalidToken123', session.cookie);
-                });
-
-                after(() => {
-                    sessionRepositoryFindOneByIdStub.restore();
-                });
-
-                it('should return \'hasValidToken\' as false', () => {
-                    expect(result.hasValidToken).to.be.false;
-                });
-
-                it('should return \'hasValidId\' as true', () => {
-                    expect(result.hasValidId).to.be.true;
-                });
-
-                it('should return \'hasValidCookie\' as true', () => {
-                    expect(result.hasValidCookie).to.be.true;
-                });
-
-                it('should return \'isValidSession\' as false', () => {
-                    expect(result.isValidSession).to.be.false;
-                });
-
-                it('should return matching \'memberId\'', () => {
-                    expect(result.memberId).to.be.equal(session.member);
-                });
-            });
-
-            describe('with an incorrect cookie token', () => {
-                let result: any; // todo: add type;
-
-                before(async () => {
-                    sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').returns(session);
-                    result = await sessionService.validateSession(session.id, 'access', session.access, 'invalidToken123');
-                });
-
-                after(() => {
-                    sessionRepositoryFindOneByIdStub.restore();
-                });
-
-                it('should return \'hasValidToken\' as true', () => {
-                    expect(result.hasValidToken).to.be.true;
-                });
-
-                it('should return \'hasValidId\' as true', () => {
-                    expect(result.hasValidId).to.be.true;
-                });
-
-                it('should return \'hasValidCookie\' as false', () => {
-                    expect(result.hasValidCookie).to.be.false;
-                });
-
-                it('should return \'isValidSession\' as false', () => {
-                    expect(result.isValidSession).to.be.false;
-                });
-
-                it('should return matching \'memberId\'', () => {
-                    expect(result.memberId).to.be.equal(session.member);
-                });
-            });
-
-            describe('with an incorrect session id', () => {
-                let result: any; // todo: add type;
-
-                before(async () => {
-                    sessionRepositoryFindOneByIdStub = sinon.stub(sessionRepository, 'findOneById').returns(undefined);
-                    result = await sessionService.validateSession(123, 'access', session.access, session.cookie);
-                });
-
-                after(() => {
-                    sessionRepositoryFindOneByIdStub.restore();
-                });
-
-                it('should return \'hasValidToken\' as false', () => {
-                    expect(result.hasValidToken).to.be.false;
-                });
-
-                it('should return \'hasValidId\' as false', () => {
-                    expect(result.hasValidId).to.be.false;
-                });
-
-                it('should return \'hasValidCookie\' as false', () => {
-                    expect(result.hasValidCookie).to.be.false;
-                });
-
-                it('should return \'isValidSession\' as false', () => {
-                    expect(result.isValidSession).to.be.false;
-                });
-
-                it('should return matching \'memberId\'', () => {
-                    expect(result.memberId).to.be.equal(null);
-                });
-            });
-        });
-    });
-
-    describe('verifyAndDecodeToken()', () => {
-        let token: string;
-
-        before(async () => {
-            process.env.JWT_SECRET = 'ABC';
-            process.env.JWT_ISSUER = 'XYZ';
-
-            const payload = {
-                exp: moment().add(1, 'hour').unix(),
-                scope: 'access',
-            };
-
-            const options = {
-                issuer: process.env.JWT_ISSUER,
-                jwtid: 'mockToken',
-                keyid: 'mockSessionId',
-            };
-
-            token = await jwt.sign(payload, process.env.JWT_SECRET, options);
-
-        });
-
-        describe('with a valid JWT', () => {
-            let result: any;
-
-            before(async () => {
-                result = await SessionService.verifyAndDecodeToken(token);
-            });
-
-            it('should return object containing [\'sessionId\', \'token\', \'type\']', () => {
-                expect(result).to.be.an('object');
-                expect(result).to.have.all.keys(['sessionId', 'token', 'type']);
-            });
-
-            it('should return \'kid\' as sessionId', () => {
-                expect(result.sessionId).to.be.string('mockSessionId');
-            });
-
-            it('should return \'jti\' as token', () => {
-                expect(result.token).to.be.string('mockToken');
-            });
-
-            it('should return \'scope\' as type', () => {
-                expect(result.type).to.be.string('access');
-            });
-        });
-
-        describe('with a tampered JWT', () => {
-            it('should return null', async () => {
-                const result = await SessionService.verifyAndDecodeToken(token + 'x');
-                expect(result).to.be.null;
-            });
         });
     });
 });

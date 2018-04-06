@@ -3,20 +3,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MembersController } from './members.controller';
 import { MembersService } from './members.service';
-import { Member } from './members.entity';
+import { EMember } from './members.entity';
 
 @Module({
     controllers: [
         MembersController,
     ],
     imports: [
-        TypeOrmModule.forFeature([Member]),
+        TypeOrmModule.forFeature([EMember]),
     ],
     components: [
         MembersService,
-    ],
-    exports: [
-        Member,
     ],
 })
 export class MembersModule {}

@@ -1,6 +1,6 @@
-import { Member } from '../members.entity';
+import { EMember } from '../members.entity';
 
-export const mockMember: Member = {
+export const mockMember: EMember = {
     id: 123,
     fname: 'Jane',
     lname: 'Doe',
