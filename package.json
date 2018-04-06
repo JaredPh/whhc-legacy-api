@@ -9,7 +9,7 @@
     "start:watch": "nodemon",
     "start:prod": "node dist/main.js",
     "prestart:prod": "tsc",
-    precommit: "npm run test",
+    "precommit": "npm run test",
     "test": "npm run test:unit",
     "test:unit": "nyc ./node_modules/mocha/bin/mocha --require ts-node/register src/**/*.spec.ts"
   },
