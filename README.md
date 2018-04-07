@@ -1,6 +1,6 @@
 # WHHC Api
 
-[![Known Vulnerabilities](https://snyk.io/test/github/jaredph/whhc-api/badge.svg)](https://snyk.io/test/github/jaredph/whhc-api)
+[![Known Vulnerabilities](https://snyk.io/test/github/JaredPh/whhc-api/badge.svg)](https://snyk.io/test/github/JaredPh/whhc-api)
 
 NestJs API for day to day hockey club management. 
 
