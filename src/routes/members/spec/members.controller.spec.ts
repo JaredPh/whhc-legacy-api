@@ -1,21 +1,12 @@
-/* Nest Testing  */
 import { Test } from '@nestjs/testing';
 import { TestingModule } from '@nestjs/testing/testing-module';
 
-/* Chai and addons */
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
 import { SinonStub } from 'sinon';
 
-/* API dependancies */
-import { SessionController } from '../session.controller';
-import { SessionRequest } from '../session.models';
-import { ISessionTokenResponse, ISessionTokens } from '../session.interfaces';
-
-/* API Test dependancies */
-import { mockSession, mockSessionTokens } from './session.test-helpers';
 import { MembersController } from '../members.controller';
 import { mockMembers } from './members.test-helpers';
 

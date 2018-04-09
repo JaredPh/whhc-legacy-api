@@ -14,7 +14,7 @@
     "prestart:prod": "tsc",
     "precommit": "npm run test",
     "test": "npm run test:unit",
-    "test:unit": "nyc ./node_modules/mocha/bin/mocha --require ts-node/register src/**/*.spec.ts && npm run test:snyk",
+    "test:unit": "nyc ./node_modules/mocha/bin/mocha --require ts-node/register src/**/*.*.ts && npm run test:snyk",
     "test:snyk": "snyk test"
   },
   "dependencies": {
@@ -25,6 +25,7 @@
     "@nestjs/typeorm": "^2.0.0",
     "@nestjs/websockets": "^4.6.6",
     "bcrypt": "^1.0.3",
+    "cognito-express": "^2.0.10",
     "compression": "^1.7.2",
     "cookie-parser": "^1.4.3",
     "dotenv-safe": "^5.0.1",
@@ -44,9 +45,6 @@
     "@types/node": "^9.6.2",
     "@types/sinon": "^4.3.1",
     "chai": "^4.1.2",
-    "chai-jwt": "^2.0.0",
-    "chai-moment": "^0.1.0",
-    "chai-uuid": "^1.0.6",
     "codacy-coverage": "^2.1.1",
     "mocha": "^5.0.5",
     "mock-req": "^0.2.0",
