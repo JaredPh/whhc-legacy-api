@@ -1,4 +1,4 @@
-import { Entity, ManyToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryColumn } from 'typeorm';
 
 import { Member } from '../../routes/members/members.entity';
 
@@ -10,4 +10,7 @@ export class Role {
 
     @ManyToMany(type => Member)
     members: Member[];
+
+    @Column()
+    weight: number;
 }
