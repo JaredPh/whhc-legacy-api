@@ -97,7 +97,7 @@ describe('MemberController', () => {
         });
 
         it('should return members with roles as an array of strings', () => {
-            result.members.forEach((member, index) => {
+            result.members.forEach((member) => {
                 expect(member.roles).to.be.an('array');
                 member.roles.forEach(role => expect(role).to.be.a('string'));
             });

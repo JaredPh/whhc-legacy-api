@@ -1,6 +1,4 @@
-import Members = Chai.Members;
-
-export const mockMembers: Members[] = [
+export const mockMembers = [
     {
         id: 1,
         userId: 'abcdef01-abcd-1234-7890-abcdefabcdef',

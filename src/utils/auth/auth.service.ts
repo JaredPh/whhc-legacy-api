@@ -1,6 +1,4 @@
 import { Component } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import * as CognitoExpress from 'cognito-express';
 
@@ -10,10 +8,9 @@ import { MembersService } from '../../routes/members/members.service';
 @Component()
 export class AuthService {
 
-    private cognitoExpress: CognitoExpress;
+    public cognitoExpress: CognitoExpress;
 
     constructor(
-        // @InjectRepository(Member) private readonly membersRepository: Repository<Member>,
         private readonly membersService: MembersService,
     ) {
         this.cognitoExpress = new CognitoExpress({
@@ -34,19 +31,21 @@ export class AuthService {
                 resolve(null);
             }
 
-            if (!/Bearer [^ ]+/.test(header)) resolve(null);
+            if (/Bearer [^ ]+/.test(header)) {
+                const token = header.split(' ')[1];
 
-            const token = header.split(' ')[1];
+                this.cognitoExpress.validate(token, (error, response) => {
 
-            this.cognitoExpress.validate(token, (error, response) => {
+                    if (error) {
+                        resolve(null);
+                    } else {
+                        resolve(response['cognito:username']);
+                    }
 
-                if (error) {
-                    resolve(null);
-                } else {
-                    resolve(response['cognito:username']);
-                }
-
-            });
+                });
+            } else {
+                resolve(null);
+            }
         });
     }
 

@@ -15,7 +15,7 @@ export class MembersService {
         return await this.membersRepository.find();
     }
 
-    public async findOneByUserId(userId: string): Promise<Member[]> {
+    public async findOneByUserId(userId: string): Promise<Member> {
         return await this.membersRepository.findOne({ userId });
     }
 }
