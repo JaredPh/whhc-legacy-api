@@ -1,0 +1,13 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "<AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<DOCKER_CONTAINER>:<VERSION>",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "HostPort": "80",
+      "ContainerPort": "3000"
+    }
+  ]
+}

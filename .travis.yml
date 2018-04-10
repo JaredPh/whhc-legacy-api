@@ -2,10 +2,15 @@ sudo: required
 dist: trusty
 language: node_js
 node_js:
-    - "8.9.4"
-language: node_js
+  - "8.9.4"
+services:
+- docker
 before_install:
+- npm install -g npm@^5.x
+- npm install -g node-gyp
 - npm install -g snyk
+install:
+- npm install
 script:
 - npm run test
 - npm run codacy
@@ -16,14 +21,11 @@ notifications:
   email:
     on_failure: change
     on_success: change
+before_deploy:
+- chmod +x ./deploy.sh
 deploy:
-  provider: elasticbeanstalk
-  access_key_id: $AWS_ACCESS_KEY_ID
-  secret_access_key:
-    secure: "$AWS_SECRET_ACCESS_KEY"
-  region: "$AWS_REGION"
-  app: "$APP_NAME"
-  env: "$APP_TEST_ENV"
-  bucket_name: "$S3_BUCKET_NAME"
+- provider: script
+  script: ./deploy.sh $TRAVIS_BUILD_NUMBER $TRAVIS_BRANCH $AWS_ACCOUNT_ID $AWS_REGION $DOCKER_CONTAINER $S3_BUCKET $EB_APP
+  skip_cleanup: true
   on:
     branch: deploy-test
