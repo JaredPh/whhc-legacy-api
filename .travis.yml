@@ -24,6 +24,8 @@ notifications:
     on_failure: change
     on_success: change
 before_deploy:
+- sudo apt-get install -y python3.4
+- sudo apt-get install --upgrade -y python-pip
 - chmod +x ./deploy.sh
 deploy:
 - provider: script
