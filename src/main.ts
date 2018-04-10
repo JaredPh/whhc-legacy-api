@@ -7,8 +7,8 @@ import * as helmet from 'helmet';
 import * as dotEnv from 'dotenv-safe';
 
 import { ApplicationModule } from './app.module';
-import { SessionGuard } from './routes/session/session.guard';
-import { SessionModule } from './routes/session/session.module';
+import { AuthModule } from './utils/auth/auth.module';
+import { AuthGuard } from './utils/auth/auth.guard';
 
 dotEnv.config();
 
@@ -20,8 +20,8 @@ instance.use(cookieParser());
 const bootstrap = async (): Promise<void> => {
     const app = await NestFactory.create(ApplicationModule, instance);
 
-    const sessionGuard = app.select(SessionModule).get<SessionGuard>(SessionGuard);
-    app.useGlobalGuards(sessionGuard);
+    const authGuard = app.select(AuthModule).get<AuthGuard>(AuthGuard);
+    app.useGlobalGuards(authGuard);
 
     await app.listen(3000);
 };
