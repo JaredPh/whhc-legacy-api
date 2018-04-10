@@ -1,8 +1,11 @@
-import { Guard, CanActivate, ExecutionContext, Inject, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+    Guard, CanActivate, ExecutionContext, Inject, BadRequestException, UnauthorizedException,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { errorMessages } from '../../utils/errors/error.messages';
 import { AuthService } from './auth.service';
+import { errorMessages } from '../errors/error.messages';
 
 @Guard()
 export class AuthGuard implements CanActivate {
@@ -16,14 +19,17 @@ export class AuthGuard implements CanActivate {
         const { handler } = context;
         const routeRoles = this.reflector.get<string[]>('roles', handler);
 
-        const tokenUser = await this.authService.verifyToken(req.headers.authorization);
+        const userId = await this.authService.verifyToken(req);
 
-        if (routeRoles && !tokenUser) return false;
+        if (!userId) {
+            if (routeRoles) return false;
+            return true;
+        }
+        const user = await this.authService.getMember(userId);
 
-        const user = await this.authService.getMember(tokenUser);
+        if (!user) throw new InternalServerErrorException(errorMessages.DATABASE_RESOURSE_NOT_FOUND);
+
         req.user = user;
-
-        console.log('user', '=>', req.user);
 
         if (!routeRoles) return true;
 

@@ -15,5 +15,8 @@ import { Member } from './members.entity';
     imports: [
         TypeOrmModule.forFeature([Member]),
     ],
+    exports: [
+        MembersService,
+    ],
 })
 export class MembersModule {}

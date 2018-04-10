@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 
 import * as CognitoExpress from 'cognito-express';
 
-import { TokenUser } from './auth.models';
 import { Member } from '../../routes/members/members.entity';
+import { MembersService } from '../../routes/members/members.service';
 
 @Component()
 export class AuthService {
@@ -13,7 +13,8 @@ export class AuthService {
     private cognitoExpress: CognitoExpress;
 
     constructor(
-        @InjectRepository(Member) private readonly membersRepository: Repository<Member>,
+        // @InjectRepository(Member) private readonly membersRepository: Repository<Member>,
+        private readonly membersService: MembersService,
     ) {
         this.cognitoExpress = new CognitoExpress({
             region: 'eu-west-1',
@@ -23,8 +24,16 @@ export class AuthService {
         });
     }
 
-    public verifyToken(header: string): Promise<TokenUser> {
+    public verifyToken(req: any): Promise<string> {
         return new Promise((resolve) => {
+            let header: string;
+
+            try {
+                header = req.headers.authorization;
+            } catch {
+                resolve(null);
+            }
+
             if (!/Bearer [^ ]+/.test(header)) resolve(null);
 
             const token = header.split(' ')[1];
@@ -42,6 +51,6 @@ export class AuthService {
     }
 
     public async getMember(userId: string): Promise<Member> {
-        return await this.membersRepository.findOne({ userId });
+        return await this.membersService.findOneByUserId(userId);
     }
 }
