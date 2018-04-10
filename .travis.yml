@@ -1,8 +1,8 @@
 sudo: required
 dist: trusty
 language: node_js
-node_js:
-  - "8.9.4"
+node_js: "8.9.4"
+python: "3.6"
 services:
 - docker
 before_install:
@@ -22,7 +22,6 @@ notifications:
     on_failure: change
     on_success: change
 before_deploy:
-- pip install --upgrade pip
 - chmod +x ./deploy.sh
 deploy:
 - provider: script

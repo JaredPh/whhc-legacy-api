@@ -14,7 +14,7 @@ VERSION=v$TRAVIS_BUILD_NUMBER.$TRAVIS_BRANCH
 ZIP=Dockerrun.aws.${VERSION}.zip
 
 docker --version
-pip install --user awscli
+pip3 install --user awscli
 export PATH=$PATH:$HOME/.local/bin
 eval $(aws ecr get-login --region eu-west-1)
 
