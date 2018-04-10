@@ -13,8 +13,8 @@
     "start:prod": "node dist/main.js",
     "prestart:prod": "tsc",
     "precommit": "npm run test",
-    "test": "npm run test:unit",
-    "test:unit": "nyc ./node_modules/mocha/bin/mocha --require ts-node/register src/**/*.*.ts && npm run test:snyk",
+    "test": "npm run test:unit && npm run test:snyk",
+    "test:unit": "nyc ./node_modules/mocha/bin/mocha --require ts-node/register tests/**/*.spec.ts",
     "test:snyk": "snyk test"
   },
   "dependencies": {

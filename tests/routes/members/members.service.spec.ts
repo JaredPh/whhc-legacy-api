@@ -8,11 +8,11 @@ import { SinonStub } from 'sinon';
 
 import { Repository } from 'typeorm';
 
-import { Member } from '../../members/members.entity';
+import { Member } from '../../../src/routes/members/members.entity';
 
 import { mockJwtTokens, mockJwtSecret, mockSession, mockJwtIssuer } from './session.test-helpers';
 import { mockMember, mockMemberTextPass } from '../../members/tests/members.test-helpers';
-import { MembersService } from '../members.service';
+import { MembersService } from '../../../src/routes/members/members.service';
 import { mockMembers } from './members.test-helpers';
 
 chai.use(sinonChai);
@@ -21,6 +21,7 @@ const expect = chai.expect;
 
 class MemberRepository extends Repository<Member> {
     find() {}
+    findOne() {}
 }
 
 describe('MembersService', () => {
@@ -48,8 +49,7 @@ describe('MembersService', () => {
         let result: Member[];
 
         before(async () => {
-            memberRepositoryFindStub = sinon.stub(memberRepository, 'find')
-                .resolves(mockMembers);
+            memberRepositoryFindStub = sinon.stub(memberRepository, 'find').resolves(mockMembers);
 
             result = await membersService.findAll();
         });
@@ -60,6 +60,26 @@ describe('MembersService', () => {
 
         it('should return members from the repository unaltered ', () => {
             expect(result).to.deep.equal(mockMembers);
+        });
+    });
+
+    describe('findOneByUserId()', () => {
+        let memberRepositoryFindOneByUserIdStub: SinonStub;
+        let result: Member[];
+
+        before(async () => {
+            memberRepositoryFindOneByUserIdStub = sinon.stub(memberRepository, 'findOne')
+                .resolves(mockMembers[0]);
+
+            result = await membersService.findOneByUserId(mockMembers[0].userId);
+        });
+
+        after(() => {
+            memberRepositoryFindOneByUserIdStub.restore();
+        });
+
+        it('should return a single member from the repository unaltered ', () => {
+            expect(result).to.deep.equal(mockMembers[0]);
         });
     });
 });

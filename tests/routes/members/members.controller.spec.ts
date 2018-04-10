@@ -7,7 +7,7 @@ import * as sinonChai from 'sinon-chai';
 
 import { SinonStub } from 'sinon';
 
-import { MembersController } from '../members.controller';
+import { MembersController } from '../../../src/routes/members/members.controller';
 import { mockMembers } from './members.test-helpers';
 
 chai.use(sinonChai);

@@ -5,8 +5,8 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
 import { SinonSpy, SinonStub } from 'sinon';
-import { mockMembers } from '../../../routes/members/spec/members.test-helpers';
-import { AuthService } from '../auth.service';
+import { mockMembers } from '../../routes/members/members.test-helpers';
+import { AuthService } from '../../../src/utils/auth/auth.service';
 import { mockRequests, mockUserName } from './auth.test-helpers';
 
 chai.use(sinonChai);

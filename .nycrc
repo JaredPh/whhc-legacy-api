@@ -3,20 +3,20 @@
   "lines": 99,
   "statements": 99,
   "functions": 99,
-  "branches": 85,
+  "branches": 75,
   "include": [
     "src/**/*.ts"
   ],
   "exclude": [
-    "**/*.spec.ts",
-    "**/*.entity.ts",
-    "**/*.test-helpers.ts"
+    "**/*.decorators.ts",
+    "**/*.entity.ts"
   ],
   "reporter": [
     "lcov",
     "text-summary"
   ],
-  "require": [],
+  "require": [
+  ],
   "extension": [
     ".ts"
   ],
