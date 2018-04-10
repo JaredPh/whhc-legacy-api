@@ -16,3 +16,14 @@ notifications:
   email:
     on_failure: change
     on_success: change
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key:
+    secure: "$AWS_SECRET_ACCESS_KEY"
+  region: "$AWS_REGION"
+  app: "$APP_NAME"
+  env: "$APP_TEST_ENV"
+  bucket_name: "$S3_BUCKET_NAME"
+  on:
+    branch: deploy-test
