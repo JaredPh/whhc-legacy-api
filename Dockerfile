@@ -7,8 +7,8 @@ COPY . .
 
 RUN npm install -g @types/node typescript  --silent
 RUN npm install --silent
-RUN npm run build
+RUN npm run prestart:prod
 
 EXPOSE 3000
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "start:prod" ]
