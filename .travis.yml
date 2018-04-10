@@ -22,6 +22,7 @@ notifications:
     on_failure: change
     on_success: change
 before_deploy:
+- pip install --upgrade pip
 - chmod +x ./deploy.sh
 deploy:
 - provider: script
