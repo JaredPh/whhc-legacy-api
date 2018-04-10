@@ -24,15 +24,10 @@ notifications:
     on_failure: change
     on_success: change
 before_deploy:
-- sudo apt-get -y install python3-pip python-dev
-- sudo pip3 install -U setuptools
-- sudo pip3 install -U virtualenvwrapper
-- python3 -V
-- pip3 -V
 - chmod +x ./deploy.sh
 deploy:
 - provider: script
-  script: ./deploy.sh $TRAVIS_BUILD_NUMBER $TRAVIS_BRANCH $AWS_ACCOUNT_ID $AWS_REGION $DOCKER_CONTAINER $S3_BUCKET $EB_APP
+  script: ./deploy.sh
   skip_cleanup: true
   on:
     branch: deploy-test
