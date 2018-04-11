@@ -2,10 +2,17 @@ sudo: required
 dist: trusty
 language: node_js
 node_js:
-    - "8.9.4"
-language: node_js
+  - "8.9"
+python:
+  - "3.6"
+services:
+- docker
 before_install:
+- npm install -g npm@^5.x
+- npm install -g node-gyp
 - npm install -g snyk
+install:
+- npm install
 script:
 - npm run test
 - npm run codacy
@@ -16,3 +23,13 @@ notifications:
   email:
     on_failure: change
     on_success: change
+before_deploy:
+- sudo apt-get install -y python3.4
+- sudo apt-get install --upgrade -y python-pip
+- chmod +x ./deploy.sh
+deploy:
+- provider: script
+  script: ./deploy.sh $TRAVIS_BUILD_NUMBER $TRAVIS_BRANCH $AWS_ACCOUNT_ID $AWS_REGION $DOCKER_CONTAINER $S3_BUCKET $EB_APP
+  skip_cleanup: true
+  on:
+    branch: deploy-test
