@@ -10,7 +10,7 @@
     "codacy": "cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage",
     "start": "node index.js",
     "start:watch": "nodemon",
-    "start:prod": "node dist/main.js",
+    "start:prod": "node index.js",
     "prestart:prod": "tsc",
     "precommit": "npm run test",
     "test": "npm run test:unit && npm run test:snyk",
