@@ -32,4 +32,10 @@ deploy:
   script: ./deploy.sh $TRAVIS_BUILD_NUMBER $TRAVIS_BRANCH $AWS_ACCOUNT_ID $AWS_REGION $DOCKER_CONTAINER $S3_BUCKET $EB_APP
   skip_cleanup: true
   on:
-    branch: deploy-test
+    branch: test
+deploy:
+- provider: script
+  script: ./deploy.sh $TRAVIS_BUILD_NUMBER $TRAVIS_BRANCH $AWS_ACCOUNT_ID $AWS_REGION $DOCKER_CONTAINER $S3_BUCKET $EB_APP
+  skip_cleanup: true
+  on:
+    branch: master
