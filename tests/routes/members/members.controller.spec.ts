@@ -9,6 +9,9 @@ import { SinonStub } from 'sinon';
 
 import { MembersController } from '../../../src/routes/members/members.controller';
 import { mockMembers } from './members.test-helpers';
+import { MemberPostRegistrationRequest } from '../../../src/routes/members/members.models';
+import { async } from 'rxjs/scheduler/async';
+import { BadRequestException } from '@nestjs/common';
 
 chai.use(sinonChai);
 
@@ -16,6 +19,8 @@ const expect = chai.expect;
 
 class MembersService {
     findAll() {}
+    findOneByEmail() {}
+    save() {}
 }
 
 describe('MemberController', () => {
@@ -112,33 +117,175 @@ describe('MemberController', () => {
             result = await membersController.getCurrentMember(currentUser);
         });
 
-        it('should return an object with key [\'member\']', () => {
-            expect(result).to.have.all.keys(['member']);
+        it('should return an object with key [\'members\']', () => {
+            expect(result).to.have.all.keys(['members']);
         });
 
-        it('should return member with keys [\'id\', \'email\', \'fname\', \'lname\', \'roles\']', () => {
-            expect(result.member).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'roles']);
+        it('should return the same number of members as returned from the members service', () => {
+            expect(result.members).to.be.an('array').of.length(1);
         });
 
-        it('should return id equal to the current user id', () => {
-            expect(result.member.id).to.be.equal(currentUser.id);
+        it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'roles\']', () => {
+            expect(result.members[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'roles']);
+        });
+
+        it('should return members with id equal to the value returned from the members service', () => {
+            expect(result.members[0].id).to.be.equal(mockMembers[0].id);
         });
 
         it('should return members with email equal to the value returned from the members service', () => {
-            expect(result.member.email).to.be.equal(currentUser.email);
+            expect(result.members[0].email).to.be.equal(mockMembers[0].email);
         });
 
         it('should return members with fname equal to the value returned from the members service', () => {
-            expect(result.member.fname).to.be.equal(currentUser.fname);
+            expect(result.members[0].fname).to.be.equal(mockMembers[0].fname);
         });
 
         it('should return members with lname equal to the value returned from the members service', () => {
-            expect(result.member.lname).to.be.equal(currentUser.lname);
+            expect(result.members[0].lname).to.be.equal(mockMembers[0].lname);
         });
 
         it('should return members with roles as an array of strings', () => {
-            expect(result.member.roles).to.be.an('array');
-            result.member.roles.forEach(role => expect(role).to.be.a('string'));
+            expect(result.members[0].roles).to.be.an('array');
+            result.members[0].roles.forEach(role => expect(role).to.be.a('string'));
+        });
+    });
+
+    describe('createMemberPostCognitoRegistration()', () => {
+        let memberServiceFindOneByEmailStub: SinonStub;
+        let memberServiceSaveStub: SinonStub;
+
+
+        beforeEach(() => {
+            memberServiceSaveStub = sinon.stub(membersService, 'save');
+            memberServiceFindOneByEmailStub = sinon.stub(membersService, 'findOneByEmail');
+        });
+
+        afterEach(() => {
+            memberServiceFindOneByEmailStub.restore();
+            memberServiceSaveStub.restore();
+        });
+
+        it('should throw an error a userId already exists against an id', async () => {
+            let caughtError;
+            const { userId, fname, lname, email } = mockMembers[0];
+
+            memberServiceFindOneByEmailStub.resolves({ userId, fname, lname, email });
+
+            try {
+                await membersController.createMemberPostCognitoRegistration({
+                    userId,
+                    fname,
+                    lname,
+                    email,
+                });
+            } catch (error) {
+                caughtError = error;
+            }
+
+            expect(caughtError instanceof BadRequestException).to.be.true;
+        });
+
+        describe('adding a user to an existing member', () => {
+            let result: any;
+
+            beforeEach(async () => {
+                const {userId, fname, lname, email} = mockMembers[0];
+
+                memberServiceFindOneByEmailStub.resolves({fname, lname, email});
+                memberServiceSaveStub.resolves(mockMembers[0]);
+
+                result = await membersController.createMemberPostCognitoRegistration({
+                    userId,
+                    fname,
+                    lname,
+                    email,
+                });
+            });
+
+            it('should return an object with key [\'members\']', () => {
+                expect(result).to.have.all.keys(['members']);
+            });
+
+            it('should return the same number of members as returned from the members service', () => {
+                expect(result.members).to.be.an('array').of.length(1);
+            });
+
+            it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'roles\']', () => {
+                expect(result.members[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'roles']);
+            });
+
+            it('should return members with id equal to the value returned from the members service', () => {
+                expect(result.members[0].id).to.be.equal(mockMembers[0].id);
+            });
+
+            it('should return members with email equal to the value returned from the members service', () => {
+                expect(result.members[0].email).to.be.equal(mockMembers[0].email);
+            });
+
+            it('should return members with fname equal to the value returned from the members service', () => {
+                expect(result.members[0].fname).to.be.equal(mockMembers[0].fname);
+            });
+
+            it('should return members with lname equal to the value returned from the members service', () => {
+                expect(result.members[0].lname).to.be.equal(mockMembers[0].lname);
+            });
+
+            it('should return members with roles as an array of strings', () => {
+                expect(result.members[0].roles).to.be.an('array');
+                result.members[0].roles.forEach(role => expect(role).to.be.a('string'));
+            });
+        });
+
+        describe('adding a user to a new member', () => {
+            let result: any;
+
+            beforeEach(async () => {
+                const {userId, fname, lname, email} = mockMembers[0];
+
+                memberServiceFindOneByEmailStub.resolves(null);
+                memberServiceSaveStub.resolves(mockMembers[0]);
+
+                result = await membersController.createMemberPostCognitoRegistration({
+                    userId,
+                    fname,
+                    lname,
+                    email,
+                });
+            });
+
+            it('should return an object with key [\'members\']', () => {
+                expect(result).to.have.all.keys(['members']);
+            });
+
+            it('should return the same number of members as returned from the members service', () => {
+                expect(result.members).to.be.an('array').of.length(1);
+            });
+
+            it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'roles\']', () => {
+                expect(result.members[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'roles']);
+            });
+
+            it('should return members with id equal to the value returned from the members service', () => {
+                expect(result.members[0].id).to.be.equal(mockMembers[0].id);
+            });
+
+            it('should return members with email equal to the value returned from the members service', () => {
+                expect(result.members[0].email).to.be.equal(mockMembers[0].email);
+            });
+
+            it('should return members with fname equal to the value returned from the members service', () => {
+                expect(result.members[0].fname).to.be.equal(mockMembers[0].fname);
+            });
+
+            it('should return members with lname equal to the value returned from the members service', () => {
+                expect(result.members[0].lname).to.be.equal(mockMembers[0].lname);
+            });
+
+            it('should return members with roles as an array of strings', () => {
+                expect(result.members[0].roles).to.be.an('array');
+                result.members[0].roles.forEach(role => expect(role).to.be.a('string'));
+            });
         });
     });
 });
