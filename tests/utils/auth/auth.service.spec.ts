@@ -4,12 +4,13 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
-import { SinonSpy, SinonStub } from 'sinon';
+import { SinonStub } from 'sinon';
 import { mockMembers } from '../../routes/members/members.test-helpers';
 import { AuthService } from '../../../src/utils/auth/auth.service';
 import { mockRequests, mockUserName } from './auth.test-helpers';
 
-import * as dotEnv from 'dotenv-safe';
+import * as dotEnv from 'dotenv';
+
 import { EncryptionService } from '../../../src/utils/encryption/encryption.service';
 import { CognitoEvent } from '../../../src/utils/auth/auth.interfaces';
 import * as moment from 'moment';

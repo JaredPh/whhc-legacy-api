@@ -9,8 +9,6 @@ import { SinonStub } from 'sinon';
 
 import { MembersController } from '../../../src/routes/members/members.controller';
 import { mockMembers } from './members.test-helpers';
-import { MemberPostRegistrationRequest } from '../../../src/routes/members/members.models';
-import { async } from 'rxjs/scheduler/async';
 import { BadRequestException } from '@nestjs/common';
 
 chai.use(sinonChai);

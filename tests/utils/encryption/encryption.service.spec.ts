@@ -2,10 +2,7 @@ import { EncryptionService } from '../../../src/utils/encryption/encryption.serv
 
 import * as chai from 'chai';
 
-import * as dotEnv from 'dotenv-safe';
-
 const expect = chai.expect;
-dotEnv.config();
 
 describe('Encryption Service', () => {
 
