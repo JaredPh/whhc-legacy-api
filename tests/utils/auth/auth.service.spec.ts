@@ -9,6 +9,13 @@ import { mockMembers } from '../../routes/members/members.test-helpers';
 import { AuthService } from '../../../src/utils/auth/auth.service';
 import { mockRequests, mockUserName } from './auth.test-helpers';
 
+import * as dotEnv from 'dotenv-safe';
+import { EncryptionService } from '../../../src/utils/encryption/encryption.service';
+import { CognitoEvent } from '../../../src/utils/auth/auth.interfaces';
+import * as moment from 'moment';
+
+dotEnv.config();
+
 chai.use(sinonChai);
 
 const expect = chai.expect;
@@ -121,6 +128,113 @@ describe('AuthService', () => {
             it('should not call cognito-express to validate the token', () => {
                 expect(authServiceCognitoExpressSpy).to.have.not.been.called;
             });
+        });
+    });
+
+    describe('verifyEncryptedKey()', () => {
+
+        it('should return true with a valid key', () => {
+            const payload: CognitoEvent = {
+                type: 'mockEvent',
+                cognitoPoolId: process.env.COGNITO_USER_POOL_ID,
+                time: +moment(),
+            };
+
+            const keyString = JSON.stringify(payload);
+            const key = EncryptionService.encrypt(keyString);
+
+            const eventType = 'mockEvent';
+
+            const result = authService.verifyEncryptedKey(key, eventType);
+
+            expect(result).to.be.true;
+        });
+
+        it('should return false when the key decrypts a payload where the event time is too early', () => {
+            const payload: CognitoEvent = {
+                type: 'mockEvent',
+                cognitoPoolId: process.env.COGNITO_USER_POOL_ID,
+                time: +moment() - 61 * 1000,
+            };
+
+            const keyString = JSON.stringify(payload);
+            const key = EncryptionService.encrypt(keyString);
+
+            const eventType = 'mockEvent';
+
+            const result = authService.verifyEncryptedKey(key, eventType);
+
+            expect(result).to.be.false;
+        });
+
+        it('should return false when the key decrypts a payload where the event time is too late', () => {
+            const payload: CognitoEvent = {
+                type: 'mockEvent',
+                cognitoPoolId: process.env.COGNITO_USER_POOL_ID,
+                time: +moment() + 61 * 1000,
+            };
+
+            const keyString = JSON.stringify(payload);
+            const key = EncryptionService.encrypt(keyString);
+
+            const eventType = 'mockEvent';
+
+            const result = authService.verifyEncryptedKey(key, eventType);
+
+            expect(result).to.be.false;
+        });
+
+        it('should return false when the key decrypts a payload where the poolId doesn\'t match', () => {
+            const payload: CognitoEvent = {
+                type: 'mockEvent',
+                cognitoPoolId: 'wrongPoolId',
+                time: +moment(),
+            };
+
+            const keyString = JSON.stringify(payload);
+            const key = EncryptionService.encrypt(keyString);
+
+            const eventType = 'mockEvent';
+
+            const result = authService.verifyEncryptedKey(key, eventType);
+
+            expect(result).to.be.false;
+        });
+
+        it('should return false when the key decrypts a payload where the event doesn\'t match', () => {
+            const payload: CognitoEvent = {
+                type: 'differentEvent',
+                cognitoPoolId: process.env.COGNITO_USER_POOL_ID,
+                time: +moment(),
+            };
+
+            const keyString = JSON.stringify(payload);
+            const key = EncryptionService.encrypt(keyString);
+
+            const eventType = 'mockEvent';
+
+            const result = authService.verifyEncryptedKey(key, eventType);
+
+            expect(result).to.be.false;
+        });
+
+        it('should return false when the key decrypts an invalid json string', () => {
+            const keyString = '{ notValidJSON }';
+            const key = EncryptionService.encrypt(keyString);
+
+            const eventType = 'mockEvent';
+
+            const result = authService.verifyEncryptedKey(key, eventType);
+
+            expect(result).to.be.false;
+        });
+
+        it('should return false when the encryption is invalid ', () => {
+            const key = 'invalid:keyString';
+            const eventType = 'mockEvent';
+            const result = authService.verifyEncryptedKey(key, eventType);
+
+            expect(result).to.be.false;
         });
     });
 

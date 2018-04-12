@@ -16,29 +16,38 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(req, context: ExecutionContext): Promise<boolean> {
 
-        const { handler } = context;
-        const routeRoles = this.reflector.get<string[]>('roles', handler);
+        const {handler} = context;
+        const lamdaEvent = this.reflector.get<string>('lamdaEvent', handler);
 
-        const userId = await this.authService.verifyToken(req);
+        if (lamdaEvent) {
+            return (req.query.key)
+                ? this.authService.verifyEncryptedKey(req.query.key, lamdaEvent)
+                : false;
 
-        if (!userId) {
-            if (routeRoles) return false;
+        } else {
+            const routeRoles = this.reflector.get<string[]>('roles', handler);
+
+            const userId = await this.authService.verifyToken(req);
+
+            if (!userId) {
+                if (routeRoles) return false;
+                return true;
+            }
+            const user = await this.authService.getMember(userId);
+
+            if (!user) throw new InternalServerErrorException(errorMessages.DATABASE_RESOURSE_NOT_FOUND);
+
+            req.user = user;
+
+            if (!routeRoles) return true;
+
+            const userRoles = user.roles.map(role => role.id);
+
+            const matchingRoles = routeRoles.filter(r => userRoles.indexOf(r) >= 0);
+
+            if (matchingRoles.length === 0) return false;
+
             return true;
         }
-        const user = await this.authService.getMember(userId);
-
-        if (!user) throw new InternalServerErrorException(errorMessages.DATABASE_RESOURSE_NOT_FOUND);
-
-        req.user = user;
-
-        if (!routeRoles) return true;
-
-        const userRoles = user.roles.map(role => role.id);
-
-        const matchingRoles = routeRoles.filter(r => userRoles.indexOf(r) >= 0);
-
-        if (matchingRoles.length === 0) return false;
-
-        return true;
     }
 }
