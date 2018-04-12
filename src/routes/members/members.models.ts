@@ -1,6 +1,8 @@
+import { IsString } from 'class-validator';
+
 import { Member } from './members.entity';
 
-export class MemberResponse {
+export class MemberResult {
     id: number;
     email: string;
     fname: string;
@@ -15,8 +17,20 @@ export class MemberResponse {
         this.fname = data.fname;
         this.lname = data.lname;
 
-        this.roles = data.roles
-            .sort((roleA, RoleB) => roleA.weight - RoleB.weight)
-            .map(role => role.id);
+        this.roles = data.roles.map(role => role.id);
     }
+}
+
+export class MemberPostRegistrationRequest {
+    @IsString()
+    readonly userId: string;
+
+    @IsString()
+    readonly email: string;
+
+    @IsString()
+    readonly fname: string;
+
+    @IsString()
+    readonly lname: string;
 }

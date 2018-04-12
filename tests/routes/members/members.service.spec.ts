@@ -22,6 +22,8 @@ const expect = chai.expect;
 class MemberRepository extends Repository<Member> {
     find() {}
     findOne() {}
+    findOneByEmail() {}
+    save() {}
 }
 
 describe('MembersService', () => {
@@ -76,6 +78,46 @@ describe('MembersService', () => {
 
         after(() => {
             memberRepositoryFindOneByUserIdStub.restore();
+        });
+
+        it('should return a single member from the repository unaltered ', () => {
+            expect(result).to.deep.equal(mockMembers[0]);
+        });
+    });
+
+    describe('findOneByUserId()', () => {
+        let memberRepositoryFindOneByEmailStub: SinonStub;
+        let result: Member[];
+
+        before(async () => {
+            memberRepositoryFindOneByEmailStub = sinon.stub(memberRepository, 'findOne')
+                .resolves(mockMembers[0]);
+
+            result = await membersService.findOneByEmail(mockMembers[0].email);
+        });
+
+        after(() => {
+            memberRepositoryFindOneByEmailStub.restore();
+        });
+
+        it('should return a single member from the repository unaltered ', () => {
+            expect(result).to.deep.equal(mockMembers[0]);
+        });
+    });
+
+    describe('save()', () => {
+        let memberRepositorySaveStub: SinonStub;
+        let result: Member[];
+
+        before(async () => {
+            memberRepositorySaveStub = sinon.stub(memberRepository, 'save')
+                .resolves(mockMembers[0]);
+
+            result = await membersService.save(mockMembers[0].email);
+        });
+
+        after(() => {
+            memberRepositorySaveStub.restore();
         });
 
         it('should return a single member from the repository unaltered ', () => {

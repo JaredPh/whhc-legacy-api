@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Member } from './members.entity';
+import { MemberPostRegistrationRequest } from './members.models';
 
 @Component()
 export class MembersService {
@@ -17,5 +18,13 @@ export class MembersService {
 
     public async findOneByUserId(userId: string): Promise<Member> {
         return await this.membersRepository.findOne({ userId });
+    }
+
+    public async findOneByEmail(email: string): Promise<Member> {
+        return await this.membersRepository.findOne({ email });
+    }
+
+    public async save(member: Member): Promise<Member> {
+        return await this.membersRepository.save(member);
     }
 }

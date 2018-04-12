@@ -10,7 +10,4 @@ export class Role {
 
     @ManyToMany(type => Member)
     members: Member[];
-
-    @Column()
-    weight: number;
 }
