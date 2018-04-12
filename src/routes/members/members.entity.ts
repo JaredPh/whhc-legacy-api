@@ -6,7 +6,7 @@ import { Role } from '../../utils/auth/role.entity';
 export class Member {
 
     @PrimaryGeneratedColumn()
-    id: number;
+    id?: number;
 
     @Column({ unique: true, nullable: true, default: null })
     userId: string;

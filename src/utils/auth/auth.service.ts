@@ -1,24 +1,29 @@
 import { Component } from '@nestjs/common';
 
+import * as moment from 'moment';
 import * as CognitoExpress from 'cognito-express';
 
 import { Member } from '../../routes/members/members.entity';
 import { MembersService } from '../../routes/members/members.service';
+import { CognitoEvent, CognitoParams } from './auth.interfaces';
+import { EncryptionService } from '../encryption/encryption.service';
 
 @Component()
 export class AuthService {
 
-    public cognitoExpress: CognitoExpress;
+    private cognitoParams: CognitoParams = {
+        cognitoUserPoolId: process.env.COGNITO_USER_POOL_ID,
+        region: process.env.COGNITO_REGION,
+        tokenUse: 'id',
+        tokenExpiration: process.env.COGNITO_TOKEN_EXP,
+    };
+
+    public cognitoExpress: CognitoExpress; // public for testing
 
     constructor(
         private readonly membersService: MembersService,
     ) {
-        this.cognitoExpress = new CognitoExpress({
-            region: 'eu-west-1',
-            cognitoUserPoolId: 'eu-west-1_E1Ww58O9j',
-            tokenUse: 'id',
-            tokenExpiration: 3600000, // 1 hour
-        });
+        this.cognitoExpress = new CognitoExpress(this.cognitoParams);
     }
 
     public verifyToken(req: any): Promise<string> {
@@ -47,6 +52,28 @@ export class AuthService {
                 resolve(null);
             }
         });
+    }
+
+    public verifyEncryptedKey(key: string, eventType: string): boolean {
+        let event: CognitoEvent;
+
+        try {
+            const decryptedKey = EncryptionService.decrypt(key);
+            event = JSON.parse(decryptedKey);
+        } catch {
+            return false;
+        }
+
+        const now: number = +moment();
+        const tolerance: number = 60000; // 1 min -  1000 * 60;
+
+        const timeDiff: number = Math.abs(now - +moment(event.time));
+
+        if (event.type === eventType && event.cognitoPoolId === this.cognitoParams.cognitoUserPoolId && timeDiff < tolerance) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public async getMember(userId: string): Promise<Member> {

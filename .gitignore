@@ -3,6 +3,7 @@
 
 #env
 *.env
+*.env.backup.*
 
 # IDE
 /.idea
