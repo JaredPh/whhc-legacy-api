@@ -64,7 +64,7 @@ export class AuthService {
             return false;
         }
 
-        const now: number = +moment();
+        const now: number = +moment().utc();
         const tolerance: number = 60000; // 1 min -  1000 * 60;
 
         const timeDiff: number = Math.abs(now - +moment(event.time));

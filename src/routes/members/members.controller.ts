@@ -39,7 +39,7 @@ export class MembersController {
     }
 
     @Post()
-    @LamdaEvent('cognitoPostRegistration')
+    @LamdaEvent('PostConfirmation_ConfirmSignUp')
     async createMemberPostCognitoRegistration(
         @Body(new ValidationPipe()) newMember: MemberPostRegistrationRequest,
     ): Promise<MembersResponse> {
