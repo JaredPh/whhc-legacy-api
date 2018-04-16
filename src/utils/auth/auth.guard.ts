@@ -20,8 +20,8 @@ export class AuthGuard implements CanActivate {
         const lamdaEvent = this.reflector.get<string>('lamdaEvent', handler);
 
         if (lamdaEvent) {
-            return (req.query.key)
-                ? this.authService.verifyEncryptedKey(req.query.key, lamdaEvent)
+            return (req.query.key && req.body.iv)
+                ? this.authService.verifyEncryptedKey(`${req.body.iv}:${req.query.key}`, lamdaEvent)
                 : false;
 
         } else {
