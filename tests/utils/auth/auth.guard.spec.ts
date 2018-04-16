@@ -70,6 +70,7 @@ describe('AuthGuard', () => {
             beforeEach(() => {
                 mockReq = {
                     query: {},
+                    body: {},
                 };
 
                 reflectorGetStub = sinon.stub(reflector, 'get')
@@ -89,8 +90,9 @@ describe('AuthGuard', () => {
                 expect(result).to.be.false;
             });
 
-            it('should return false if there is key and the authService method verifyEncryptedKey returns false', async () => {
+            it('should return false if there is a key and the authService method verifyEncryptedKey returns false', async () => {
                 mockReq.query.key = 'mockKey';
+                mockReq.body.iv = 'mockIV';
 
                 authServiceVerifyEncryptedKeyStub = sinon.stub(authService, 'verifyEncryptedKey').returns(false);
                 result = await authGuard.canActivate(mockReq, mockContext);
@@ -101,6 +103,7 @@ describe('AuthGuard', () => {
 
             it('should return false if there is a key and the authService method verifyEncryptedKey returns true', async () => {
                 mockReq.query.key = 'mockKey';
+                mockReq.body.iv = 'mockIV';
 
                 authServiceVerifyEncryptedKeyStub = sinon.stub(authService, 'verifyEncryptedKey').returns(true);
                 result = await authGuard.canActivate(mockReq, mockContext);
