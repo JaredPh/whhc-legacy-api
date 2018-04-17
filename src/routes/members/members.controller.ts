@@ -65,6 +65,10 @@ export class MembersController {
         member.fname = newMember.fname;
         member.lname = newMember.lname;
 
+        member.gender = (/^[MF]$/i.test(newMember.gender))
+            ? newMember.gender.toUpperCase()
+            : null;
+
         member = await this.membersService.save(member);
 
         return { members: [ new MemberResult(member) ] };

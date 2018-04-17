@@ -33,4 +33,7 @@ export class MemberPostRegistrationRequest {
 
     @IsString()
     readonly lname: string;
+
+    @IsString()
+    readonly gender: string;
 }

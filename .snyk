@@ -6,7 +6,7 @@ ignore:
     - '@nestjs/core > body-parser > debug':
         reason: Still in development
         expires: '2018-05-07T00:02:57.474Z'
-      bcrypt > node-pre-gyp > tar-pack > debug:
+    - bcrypt > node-pre-gyp > tar-pack > debug:
         reason: Still in development
         expires: '2018-05-07T00:05:35.875Z'
   'npm:validator:20180218':
