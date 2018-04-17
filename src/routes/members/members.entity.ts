@@ -20,6 +20,9 @@ export class Member {
     @Column()
     lname: string;
 
+    @Column()
+    gender: string;
+
     @ManyToMany(type => Role, { eager: true })
     @JoinTable({
         name: 'members_roles',
