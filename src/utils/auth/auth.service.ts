@@ -14,7 +14,7 @@ export class AuthService {
     private cognitoParams: CognitoParams = {
         cognitoUserPoolId: process.env.COGNITO_USER_POOL_ID,
         region: process.env.COGNITO_REGION,
-        tokenUse: 'id',
+        tokenUse: 'access',
         tokenExpiration: process.env.COGNITO_TOKEN_EXP,
     };
 
@@ -44,7 +44,7 @@ export class AuthService {
                     if (error) {
                         resolve(null);
                     } else {
-                        resolve(response['cognito:username']);
+                        resolve(response.username);
                     }
 
                 });
