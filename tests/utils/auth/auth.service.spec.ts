@@ -52,7 +52,7 @@ describe('AuthService', () => {
         describe('with a valid header and JWT', () => {
             before(async () => {
                 authServiceCognitoExpressSpy = sinon.stub(authService.cognitoExpress, 'validate')
-                    .callsArgWith(1, null, { 'cognito:username': mockUserName });
+                    .callsArgWith(1, null, { 'username': mockUserName });
 
                 result = await authService.verifyToken(mockRequests.valid);
             });
