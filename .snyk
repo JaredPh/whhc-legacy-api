@@ -1,16 +1,72 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.10.2
+version: v1.12.0
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'npm:debug:20170905':
     - '@nestjs/core > body-parser > debug':
         reason: Still in development
         expires: '2018-05-07T00:02:57.474Z'
+      bcrypt > node-pre-gyp > tar-pack > debug:
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.406Z'
     - bcrypt > node-pre-gyp > tar-pack > debug:
         reason: Still in development
         expires: '2018-05-07T00:05:35.875Z'
+      snyk > needle > debug:
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.406Z'
+    - snyk > proxy-agent > pac-proxy-agent > get-uri > debug:
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.406Z'
+    - snyk > snyk-sbt-plugin > debug:
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.406Z'
+    - snyk > undefsafe > debug:
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.406Z'
+    - '@nestjs/microservices > @nestjs/core > body-parser > debug':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.406Z'
+    - '@nestjs/websockets > @nestjs/core > body-parser > debug':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.406Z'
+    - '@nestjs/testing > @nestjs/core > body-parser > debug':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
   'npm:validator:20180218':
     - '@nestjs/common > class-validator > validator':
-        reason: Still in development
-        expires: '2018-05-07T00:02:57.474Z'
-patch: {}
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
+    - '@nestjs/microservices > @nestjs/common > class-validator > validator':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
+    - '@nestjs/microservices > @nestjs/core > @nestjs/common > class-validator > validator':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
+    - '@nestjs/core > @nestjs/common > class-validator > validator':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
+    - '@nestjs/testing > @nestjs/core > @nestjs/common > class-validator > validator':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
+    - '@nestjs/websockets > @nestjs/core > @nestjs/common > class-validator > validator':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
+    - '@nestjs/typeorm > @nestjs/common > class-validator > validator':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
+    - '@nestjs/testing > @nestjs/common > class-validator > validator':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
+    - '@nestjs/websockets > @nestjs/common > class-validator > validator':
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.407Z'
+  'npm:deep-extend:20180409':
+    - bcrypt > node-pre-gyp > rc > deep-extend:
+        reason: Not in prod
+        expires: '2018-06-10T11:11:47.406Z'
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:debug:20170905':
+    - '@nestjs/core > body-parser > debug':
+        patched: '2018-05-07T02:00:35.062Z'

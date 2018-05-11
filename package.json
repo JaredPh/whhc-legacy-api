@@ -15,7 +15,9 @@
     "precommit": "npm run test",
     "test": "npm run test:unit && npm run test:snyk",
     "test:unit": "nyc ./node_modules/mocha/bin/mocha --require ts-node/register tests/**/*.spec.ts",
-    "test:snyk": "snyk test"
+    "test:snyk": "snyk test",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@nestjs/common": "^4.6.6",
@@ -37,6 +39,7 @@
     "redis": "^2.7.1",
     "reflect-metadata": "^0.1.10",
     "rxjs": "^5.5.8",
+    "snyk": "^1.80.0",
     "typeorm": "^0.1.20",
     "typescript": "^2.8.1",
     "uuid": "^3.2.1"
@@ -55,8 +58,8 @@
     "pre-commit": "^1.2.2",
     "sinon": "^4.5.0",
     "sinon-chai": "^3.0.0",
-    "snyk": "^1.71.0",
     "ts-node": "^4.1.0",
     "tslint": "^5.9.1"
-  }
+  },
+  "snyk": true
 }
