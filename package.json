@@ -39,10 +39,10 @@
     "redis": "^2.7.1",
     "reflect-metadata": "^0.1.10",
     "rxjs": "^5.5.8",
+    "snyk": "^1.80.0",
     "typeorm": "^0.1.20",
     "typescript": "^2.8.1",
-    "uuid": "^3.2.1",
-    "snyk": "^1.78.1"
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
