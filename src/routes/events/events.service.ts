@@ -1,5 +1,5 @@
 import { Component } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, MoreThan, LessThan} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Event } from './events.entity';
@@ -12,8 +12,27 @@ export class EventsService {
         @InjectRepository(Event) private readonly eventRepository: Repository<Event>,
     ) {}
 
-    public async findAll(): Promise<EventResult[]> {
-        return (await this.eventRepository.find())
-            .map(e => new EventResult(e));
+    public async findAll(count: number, past: boolean = false): Promise<EventResult[]> {
+
+        const now = new Date().toJSON();
+        let where;
+
+        if (past) {
+            where = {
+                start: LessThan(now),
+            };
+        } else {
+            where = {
+                start: MoreThan(now),
+            };
+        }
+
+        return (await this.eventRepository.find({
+            where,
+            take: count,
+            order: {
+                start: (past) ? 'DESC' : 'ASC',
+            },
+        })).map(e => new EventResult(e));
     }
 }
