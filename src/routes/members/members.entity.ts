@@ -27,7 +27,7 @@ export class Member {
     @JoinTable({
         name: 'members_roles',
         joinColumn: {
-            name: 'members',
+            name: 'member',
             referencedColumnName: 'id',
         },
         inverseJoinColumn: {

@@ -1,5 +1,7 @@
-import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne, ManyToMany, JoinColumn, JoinTable } from 'typeorm';
 import { Image } from '../images/images.entity';
+import { Location } from '../locations/locations.entity';
+import { Tag } from '../tags/tags.entity';
 
 @Entity('events')
 export class Event {
@@ -10,13 +12,31 @@ export class Event {
     @Column({ nullable: false })
     heading: string;
 
-    @OneToOne(type => Image, { eager: true, nullable: false })
-    @JoinColumn()
-    thumb: Image;
-
     @Column({ type: 'datetime', nullable: false })
     start: Date;
 
     @Column({ type: 'datetime', nullable: false })
     end: Date;
+
+    @ManyToOne(type => Image, { eager: true, nullable: false })
+    @JoinColumn()
+    thumb: Image;
+
+    @ManyToOne(type => Location, { eager: true, nullable: true })
+    @JoinColumn()
+    location: Location;
+
+    @ManyToMany(type => Tag, { eager: true, nullable: true, cascade: true })
+    @JoinTable({
+        name: 'events_tags',
+        joinColumn: {
+            name: 'event',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'tag',
+            referencedColumnName: 'id',
+        },
+    })
+    tags: Tag[];
 }
