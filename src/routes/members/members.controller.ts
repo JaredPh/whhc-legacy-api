@@ -25,7 +25,7 @@ export class MembersController {
         const members = (await this.membersService.findAll())
             .map(m => new MemberResult(m));
 
-        return { members };
+        return { results: members };
     }
 
     @Get('current')
@@ -35,7 +35,7 @@ export class MembersController {
     ): Promise<MembersResponse> {
         const member = new MemberResult(await currentUser, true);
 
-        return { members: [ member ] };
+        return { results: [ member ] };
     }
 
     @Post()
@@ -71,6 +71,6 @@ export class MembersController {
 
         member = await this.membersService.save(member);
 
-        return { members: [ new MemberResult(member, true) ] };
+        return { results: [ new MemberResult(member, true) ] };
     }
 }

@@ -38,13 +38,13 @@ describe('ImagesController', () => {
 
     describe('getAllImages()', () => {
         let imagesServiceFindAllStub: SinonStub;
-        let result: any;
+        let response: any;
 
         before(async () => {
             imagesServiceFindAllStub = sinon.stub(imagesService, 'findAll')
                 .resolves(mockImages);
 
-            result = await imagesController.getAllImages();
+            response = await imagesController.getAllImages();
         });
 
         after(() => {
@@ -52,7 +52,7 @@ describe('ImagesController', () => {
         });
 
         it('should return an object with key [\'results\']', () => {
-            expect(result).to.have.all.keys(['results']);
+            expect(response).to.have.all.keys(['results']);
         });
 
         it('should call the findAll method on the images service', () => {
@@ -60,36 +60,36 @@ describe('ImagesController', () => {
         });
 
         it('should return the same number of members as returned from the images service', () => {
-            expect(result.results).to.be.an('array').of.length(mockImages.length);
+            expect(response.results).to.be.an('array').of.length(mockImages.length);
         });
 
         it('should return each image with keys [\'url\', \'description\', \'width\', \'height\']', () => {
-            result.results.forEach((image) => {
+            response.results.forEach((image) => {
                 expect(image).to.be.have.all.keys(['url', 'description', 'width', 'height']);
             });
         });
 
         it('should return images with url equal to the value returned from the images service', () => {
-            result.results.forEach((image, index) => {
+            response.results.forEach((image, index) => {
                 const expectedPattern = new RegExp(`.*${mockImages[index].id}\.${mockImages[index].ext}$`);
                 expect(image.url).to.be.match(expectedPattern);
             });
         });
 
         it('should return images with description equal to the value returned from the images service', () => {
-            result.results.forEach((image, index) => {
+            response.results.forEach((image, index) => {
                 expect(image.description).to.be.equal(mockImages[index].description);
             });
         });
 
         it('should return images with width equal to the value returned from the images service', () => {
-            result.results.forEach((image, index) => {
+            response.results.forEach((image, index) => {
                 expect(image.width).to.be.equal(mockImages[index].width);
             });
         });
 
         it('should return images with height equal to the value returned from the images service', () => {
-            result.results.forEach((image, index) => {
+            response.results.forEach((image, index) => {
                 expect(image.height).to.be.equal(mockImages[index].height);
             });
         });
