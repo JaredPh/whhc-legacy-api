@@ -3,6 +3,16 @@ import { IsString } from 'class-validator';
 import { Member } from './members.entity';
 import { ImageResult } from '../images/images.models';
 
+import { Image } from '../images/images.entity';
+
+const placeholderAvatarImage: Image = {
+    id: '3ffe537a-f893-4824-9b50-5af5008acf01',
+    ext: 'png',
+    width: 96,
+    height: 96,
+    description: 'placeholder avatar',
+};
+
 export class MemberResult {
     id: number;
     email: string;
@@ -12,7 +22,10 @@ export class MemberResult {
 
     roles: string[];
 
-    constructor(data: Member, includeRoles?: boolean) {
+    constructor(
+        data: Member,
+        includeRoles?: boolean,
+    ) {
         this.id = data.id;
 
         this.email = data.email;
@@ -22,7 +35,7 @@ export class MemberResult {
 
         this.avatar = (data.avatar)
             ? new ImageResult(data.avatar)
-            : null;
+            : new ImageResult(placeholderAvatarImage);
 
         if (includeRoles) {
             this.roles = data.roles.map(role => role.id);
