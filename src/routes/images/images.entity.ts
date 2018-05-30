@@ -17,7 +17,4 @@ export class Image {
 
     @Column()
     height: number;
-
-    @CreateDateColumn()
-    createdDate: Date;
 }

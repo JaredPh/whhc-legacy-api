@@ -1,7 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 
+import { UserRoles } from '../../utils/auth/auth.decorators';
+
 import { ImagesService } from './images.service';
-// import { ImagesResponse } from './images.interfaces';
+import { ImagesResponse } from './images.interfaces';
+import { ImageResult } from './images.models';
 
 @Controller('images')
 export class ImagesController {
@@ -10,11 +13,13 @@ export class ImagesController {
         private readonly imagesService: ImagesService,
     ) {}
 
-    // @Get()
-    // async getAllMembers(
-    // ): Promise<ImagesResponse> {
-    //     const images = await this.imagesService.findAll();
-    //
-    //     return { results: images };
-    // }
+    @Get()
+    @UserRoles(['admin'])
+    async getAllImages(
+    ): Promise<ImagesResponse> {
+        const images = (await this.imagesService.findAll())
+            .map(i => new ImageResult(i));
+
+        return { results: images };
+    }
 }
