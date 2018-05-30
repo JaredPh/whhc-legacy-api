@@ -4,7 +4,7 @@ import { LocationsService } from './locations.service';
 import { LocationsResponse} from './locations.interfaces';
 import { LocationResult } from './locations.models';
 
-@Controller('images')
+@Controller('locations')
 export class LocationsController {
 
     constructor(
