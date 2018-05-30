@@ -10,7 +10,7 @@ export class Member {
     id?: number;
 
     @Column({ unique: true, nullable: true, default: null })
-    userId: string;
+    userId?: string;
 
     @Column({ unique: true, nullable: true, default: null })
     email: string;
@@ -26,7 +26,7 @@ export class Member {
 
     @ManyToOne(type => Image, { eager: true, nullable: false })
     @JoinColumn()
-    avatar: Image;
+    avatar?: Image;
 
     @ManyToMany(type => Role, { eager: true })
     @JoinTable({

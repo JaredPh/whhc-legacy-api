@@ -1,4 +1,17 @@
-export const mockMembers = [
+import { Member } from './members.entity';
+import { Role } from '../../utils/auth/role.entity';
+
+import { Repository } from 'typeorm';
+
+export class MemberRepository extends Repository<Member> {}
+
+const adminRole = new Role();
+const memberRole = new Role();
+
+adminRole.id = 'admin';
+memberRole.id = 'member';
+
+export const mockMembers: Member[] = [
     {
         id: 1,
         userId: 'abcdef01-abcd-1234-7890-abcdefabcdef',
@@ -6,8 +19,8 @@ export const mockMembers = [
         fname: 'Jane',
         lname: 'Doe',
         roles: [
-            { id: 'committee', weight: 3 },
-            { id: 'member', weight: 1 },
+            adminRole,
+            memberRole,
         ],
         gender: 'M',
         avatar: {
@@ -21,7 +34,7 @@ export const mockMembers = [
     {
         id: 2,
         userId: null,
-        email: null,
+        email: 'name2@email.com',
         fname: 'Joe',
         lname: 'Blogs',
         roles: [],
@@ -37,12 +50,12 @@ export const mockMembers = [
     {
         id: 1,
         userId: 'abcdef01-abcd-1234-7890-abcdefabcdef',
-        email: 'name2@email.com',
+        email: 'name3@email.com',
         fname: 'Billy',
         lname: 'Bob',
         gender: 'X',
         roles: [
-            { id: 'member', weight: 1 },
+            memberRole,
         ],
         avatar: null,
     },

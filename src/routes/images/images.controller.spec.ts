@@ -15,7 +15,7 @@ chai.use(sinonChai);
 
 const expect = chai.expect;
 
-describe.only('ImagesController', () => {
+describe('ImagesController', () => {
     let imagesService: ImagesService;
     let imagesController: ImagesController;
 
@@ -69,7 +69,7 @@ describe.only('ImagesController', () => {
             });
         });
 
-        it.only('should return images with url equal to the value returned from the images service', () => {
+        it('should return images with url equal to the value returned from the images service', () => {
             result.results.forEach((image, index) => {
                 const expectedPattern = new RegExp(`.*${mockImages[index].id}\.${mockImages[index].ext}$`);
                 expect(image.url).to.be.match(expectedPattern);

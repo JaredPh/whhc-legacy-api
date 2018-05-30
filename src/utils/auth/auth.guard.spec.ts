@@ -9,7 +9,7 @@ import { SinonStub } from 'sinon';
 import { Repository } from 'typeorm';
 
 import { AuthGuard } from './auth.guard';
-import { mockMembers } from '../../../test-helpers/members.test-helpers';
+import { mockMembers } from '../../routes/members/members.test-helpers';
 import { InternalServerErrorException } from '@nestjs/common';
 
 chai.use(sinonChai);

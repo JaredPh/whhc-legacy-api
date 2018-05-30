@@ -6,25 +6,14 @@ import * as sinonChai from 'sinon-chai';
 
 import { SinonStub } from 'sinon';
 
-import { Repository } from 'typeorm';
-
 import { Member } from './members.entity';
 
-import { mockJwtTokens, mockJwtSecret, mockSession, mockJwtIssuer } from './session.test-helpers';
-import { mockMember, mockMemberTextPass } from '../../members/test-helpers/members.test-helpers';
 import { MembersService } from './members.service';
-import { mockMembers } from '../../../test-helpers/members.test-helpers';
+import { MemberRepository, mockMembers } from './members.test-helpers';
 
 chai.use(sinonChai);
 
 const expect = chai.expect;
-
-class MemberRepository extends Repository<Member> {
-    find() {}
-    findOne() {}
-    findOneByEmail() {}
-    save() {}
-}
 
 describe('MembersService', () => {
     let memberRepository: MemberRepository;
@@ -67,7 +56,7 @@ describe('MembersService', () => {
 
     describe('findOneByUserId()', () => {
         let memberRepositoryFindOneByUserIdStub: SinonStub;
-        let result: Member[];
+        let result: Member;
 
         before(async () => {
             memberRepositoryFindOneByUserIdStub = sinon.stub(memberRepository, 'findOne')
@@ -87,7 +76,7 @@ describe('MembersService', () => {
 
     describe('findOneByUserId()', () => {
         let memberRepositoryFindOneByEmailStub: SinonStub;
-        let result: Member[];
+        let result: Member;
 
         before(async () => {
             memberRepositoryFindOneByEmailStub = sinon.stub(memberRepository, 'findOne')
@@ -107,13 +96,13 @@ describe('MembersService', () => {
 
     describe('save()', () => {
         let memberRepositorySaveStub: SinonStub;
-        let result: Member[];
+        let result: Member;
 
         before(async () => {
             memberRepositorySaveStub = sinon.stub(memberRepository, 'save')
                 .resolves(mockMembers[0]);
 
-            result = await membersService.save(mockMembers[0].email);
+            result = await membersService.save(mockMembers[0]);
         });
 
         after(() => {
