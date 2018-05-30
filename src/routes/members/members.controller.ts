@@ -33,7 +33,7 @@ export class MembersController {
     async getCurrentMember(
         @User() currentUser: Member,
     ): Promise<MembersResponse> {
-        const member = new MemberResult(await currentUser);
+        const member = new MemberResult(await currentUser, true);
 
         return { members: [ member ] };
     }
@@ -65,12 +65,12 @@ export class MembersController {
         member.fname = newMember.fname;
         member.lname = newMember.lname;
 
-        member.gender = (/^[MF]$/i.test(newMember.gender))
+        member.gender = (/^M|F$/i.test(newMember.gender))
             ? newMember.gender.toUpperCase()
             : null;
 
         member = await this.membersService.save(member);
 
-        return { members: [ new MemberResult(member) ] };
+        return { members: [ new MemberResult(member, true) ] };
     }
 }

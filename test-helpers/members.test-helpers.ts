@@ -9,6 +9,14 @@ export const mockMembers = [
             { id: 'committee', weight: 3 },
             { id: 'member', weight: 1 },
         ],
+        gender: 'M',
+        avatar: {
+            id: 'someUrl',
+            ext: 'jpg',
+            description: 'image-description',
+            width: 1,
+            height: 2,
+        },
     },
     {
         id: 2,
@@ -17,6 +25,14 @@ export const mockMembers = [
         fname: 'Joe',
         lname: 'Blogs',
         roles: [],
+        gender: 'F',
+        avatar: {
+            id: 'someUrl',
+            ext: 'jpg',
+            description: 'image-description',
+            width: 1,
+            height: 2,
+        },
     },
     {
         id: 1,
@@ -24,8 +40,10 @@ export const mockMembers = [
         email: 'name2@email.com',
         fname: 'Billy',
         lname: 'Bob',
+        gender: 'X',
         roles: [
             { id: 'member', weight: 1 },
         ],
+        avatar: null,
     },
 ];

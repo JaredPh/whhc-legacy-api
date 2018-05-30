@@ -22,7 +22,7 @@ class MembersService {
 }
 
 describe('MemberController', () => {
-    let membersService: MemberService;
+    let membersService: MembersService;
     let membersController: MembersController;
 
     before(async () => {
@@ -69,9 +69,9 @@ describe('MemberController', () => {
             expect(result.members).to.be.an('array').of.length(3);
         });
 
-        it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'roles\']', () => {
+        it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'avatar\']', () => {
             result.members.forEach((member) => {
-                expect(member).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'roles']);
+                expect(member).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'avatar']);
             });
         });
 
@@ -98,13 +98,6 @@ describe('MemberController', () => {
                 expect(member.lname).to.be.equal(mockMembers[index].lname);
             });
         });
-
-        it('should return members with roles as an array of strings', () => {
-            result.members.forEach((member) => {
-                expect(member.roles).to.be.an('array');
-                member.roles.forEach(role => expect(role).to.be.a('string'));
-            });
-        });
     });
 
     describe('getCurrentMember()', () => {
@@ -123,8 +116,8 @@ describe('MemberController', () => {
             expect(result.members).to.be.an('array').of.length(1);
         });
 
-        it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'roles\']', () => {
-            expect(result.members[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'roles']);
+        it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'avatar\', \'roles\']', () => {
+            expect(result.members[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'avatar', 'roles']);
         });
 
         it('should return members with id equal to the value returned from the members service', () => {
@@ -166,9 +159,8 @@ describe('MemberController', () => {
 
         it('should throw an error a userId already exists against an id', async () => {
             let caughtError;
-            const { userId, fname, lname, email } = mockMembers[0];
-
-            memberServiceFindOneByEmailStub.resolves({ userId, fname, lname, email });
+            const { userId, fname, lname, email, gender } = mockMembers[0];
+            memberServiceFindOneByEmailStub.resolves({ userId, fname, lname, email, gender });
 
             try {
                 await membersController.createMemberPostCognitoRegistration({
@@ -176,6 +168,7 @@ describe('MemberController', () => {
                     fname,
                     lname,
                     email,
+                    gender,
                 });
             } catch (error) {
                 caughtError = error;
@@ -188,9 +181,9 @@ describe('MemberController', () => {
             let result: any;
 
             beforeEach(async () => {
-                const {userId, fname, lname, email} = mockMembers[0];
+                const {userId, fname, lname, email, gender } = mockMembers[2];
 
-                memberServiceFindOneByEmailStub.resolves({fname, lname, email});
+                memberServiceFindOneByEmailStub.resolves({ fname, lname, email, gender });
                 memberServiceSaveStub.resolves(mockMembers[0]);
 
                 result = await membersController.createMemberPostCognitoRegistration({
@@ -198,6 +191,7 @@ describe('MemberController', () => {
                     fname,
                     lname,
                     email,
+                    gender,
                 });
             });
 
@@ -209,8 +203,8 @@ describe('MemberController', () => {
                 expect(result.members).to.be.an('array').of.length(1);
             });
 
-            it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'roles\']', () => {
-                expect(result.members[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'roles']);
+            it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'avatar\', \'roles\']', () => {
+                expect(result.members[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'avatar', 'roles']);
             });
 
             it('should return members with id equal to the value returned from the members service', () => {
@@ -239,7 +233,7 @@ describe('MemberController', () => {
             let result: any;
 
             beforeEach(async () => {
-                const {userId, fname, lname, email} = mockMembers[0];
+                const {userId, fname, lname, email, gender} = mockMembers[0];
 
                 memberServiceFindOneByEmailStub.resolves(null);
                 memberServiceSaveStub.resolves(mockMembers[0]);
@@ -249,6 +243,7 @@ describe('MemberController', () => {
                     fname,
                     lname,
                     email,
+                    gender,
                 });
             });
 
@@ -260,8 +255,8 @@ describe('MemberController', () => {
                 expect(result.members).to.be.an('array').of.length(1);
             });
 
-            it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'roles\']', () => {
-                expect(result.members[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'roles']);
+            it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'avatar\', \'roles\']', () => {
+                expect(result.members[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'avatar', 'roles']);
             });
 
             it('should return members with id equal to the value returned from the members service', () => {

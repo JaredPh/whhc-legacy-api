@@ -9,7 +9,8 @@
   ],
   "exclude": [
     "**/*.decorators.ts",
-    "**/*.entity.ts"
+    "**/*.entity.ts",
+    "**/*.spec.ts"
   ],
   "reporter": [
     "lcov",

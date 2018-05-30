@@ -10,9 +10,9 @@ export class MemberResult {
     lname: string;
     avatar: ImageResult;
 
-    // roles: string[];
+    roles: string[];
 
-    constructor(data: Member) {
+    constructor(data: Member, includeRoles?: boolean) {
         this.id = data.id;
 
         this.email = data.email;
@@ -20,9 +20,13 @@ export class MemberResult {
         this.fname = data.fname;
         this.lname = data.lname;
 
-        this.avatar = new ImageResult(data.avatar);
+        this.avatar = (data.avatar)
+            ? new ImageResult(data.avatar)
+            : null;
 
-        // this.roles = data.roles.map(role => role.id);
+        if (includeRoles) {
+            this.roles = data.roles.map(role => role.id);
+        }
     }
 }
 
