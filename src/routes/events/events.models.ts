@@ -3,6 +3,7 @@ import { Event } from './events.entity';
 import { ImageResult } from '../images/images.models';
 import { LocationResult } from '../locations/locations.models';
 import { MemberResult } from '../members/members.models';
+import { TagResult } from '../tags/tags.models';
 
 export class EventResult {
     slug: string;
@@ -36,7 +37,7 @@ export class EventResult {
         this.location = new LocationResult(data.location);
 
         this.tags = data.tags
-            .map(t => t.id)
-            .sort((a, b) => a.localeCompare(b));
+            .map(t => new TagResult(t))
+            .sort((a, b) => a.name.localeCompare(b.name));
     }
 }
