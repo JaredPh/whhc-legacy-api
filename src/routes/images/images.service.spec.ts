@@ -15,7 +15,7 @@ chai.use(sinonChai);
 const expect = chai.expect;
 
 describe('ImagesService', () => {
-    let memberRepository: ImageRepository;
+    let imageRepository: ImageRepository;
     let imagesService: ImagesService;
 
     before( async () => {
@@ -30,7 +30,7 @@ describe('ImagesService', () => {
             ],
         }).compile();
 
-        memberRepository = module.get<ImageRepository>(ImageRepository);
+        imageRepository = module.get<ImageRepository>(ImageRepository);
         imagesService = module.get<ImagesService>(ImagesService);
     });
 
@@ -39,7 +39,7 @@ describe('ImagesService', () => {
         let result: Image[];
 
         before(async () => {
-            imagesRepositoryFindStub = sinon.stub(memberRepository, 'find').resolves(mockImages);
+            imagesRepositoryFindStub = sinon.stub(imageRepository, 'find').resolves(mockImages);
 
             result = await imagesService.findAll();
         });
@@ -48,7 +48,7 @@ describe('ImagesService', () => {
             imagesRepositoryFindStub.restore();
         });
 
-        it('should return members from the repository unaltered ', () => {
+        it('should return images from the repository unaltered ', () => {
             expect(result).to.deep.equal(mockImages);
         });
     });

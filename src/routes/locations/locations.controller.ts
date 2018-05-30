@@ -1,7 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 
 import { LocationsService } from './locations.service';
-// import { LocationsResponse} from './locations.interfaces';
+import { LocationsResponse} from './locations.interfaces';
+import { LocationResult } from './locations.models';
 
 @Controller('images')
 export class LocationsController {
@@ -10,11 +11,12 @@ export class LocationsController {
         private readonly locationsService: LocationsService,
     ) {}
 
-    // @Get()
-    // async getAllMembers(
-    // ): Promise<LocationsResponse> {
-    //     const locations = await this.locationsService.findAll();
-    //
-    //     return { results: locations };
-    // }
+    @Get('admin')
+    async getAllLocations(
+    ): Promise<LocationsResponse> {
+        const locations = (await this.locationsService.findAll())
+            .map(l => new LocationResult(l));
+
+        return { results: locations };
+    }
 }

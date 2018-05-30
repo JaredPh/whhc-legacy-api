@@ -59,7 +59,7 @@ describe('ImagesController', () => {
             expect(imagesServiceFindAllStub).to.have.been.called;
         });
 
-        it('should return the same number of members as returned from the images service', () => {
+        it('should return the same number of images as returned from the images service', () => {
             expect(response.results).to.be.an('array').of.length(mockImages.length);
         });
 
