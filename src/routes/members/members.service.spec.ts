@@ -8,12 +8,12 @@ import { SinonStub } from 'sinon';
 
 import { Repository } from 'typeorm';
 
-import { Member } from '../../../src/routes/members/members.entity';
+import { Member } from './members.entity';
 
 import { mockJwtTokens, mockJwtSecret, mockSession, mockJwtIssuer } from './session.test-helpers';
-import { mockMember, mockMemberTextPass } from '../../members/tests/members.test-helpers';
-import { MembersService } from '../../../src/routes/members/members.service';
-import { mockMembers } from './members.test-helpers';
+import { mockMember, mockMemberTextPass } from '../../members/test-helpers/members.test-helpers';
+import { MembersService } from './members.service';
+import { mockMembers } from '../../../test-helpers/members.test-helpers';
 
 chai.use(sinonChai);
 

@@ -5,11 +5,12 @@
   "functions": 99,
   "branches": 75,
   "include": [
-    "src/**/*.ts"
+    "**/*.ts"
   ],
   "exclude": [
     "**/*.decorators.ts",
     "**/*.entity.ts",
+    "**/*.test-helpers.ts",
     "**/*.spec.ts"
   ],
   "reporter": [

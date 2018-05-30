@@ -7,8 +7,8 @@ import * as sinonChai from 'sinon-chai';
 
 import { SinonStub } from 'sinon';
 
-import { MembersController } from '../../../src/routes/members/members.controller';
-import { mockMembers } from './members.test-helpers';
+import { MembersController } from './members.controller';
+import { mockMembers } from '../../../test-helpers/members.test-helpers';
 import { BadRequestException } from '@nestjs/common';
 
 chai.use(sinonChai);

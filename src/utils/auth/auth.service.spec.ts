@@ -5,14 +5,14 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
 import { SinonStub } from 'sinon';
-import { mockMembers } from '../../routes/members/members.test-helpers';
-import { AuthService } from '../../../src/utils/auth/auth.service';
-import { mockRequests, mockUserName } from './auth.test-helpers';
+import { mockMembers } from '../../../test-helpers/members.test-helpers';
+import { AuthService } from './auth.service';
+import { mockRequests, mockUserName } from '../../../test-helpers/auth.test-helpers';
 
 import * as dotEnv from 'dotenv';
 
-import { EncryptionService } from '../../../src/utils/encryption/encryption.service';
-import { CognitoEvent } from '../../../src/utils/auth/auth.interfaces';
+import { EncryptionService } from '../encryption/encryption.service';
+import { CognitoEvent } from './auth.interfaces';
 import * as moment from 'moment';
 
 dotEnv.config();
