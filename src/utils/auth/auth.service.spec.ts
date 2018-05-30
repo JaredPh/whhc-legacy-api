@@ -7,7 +7,7 @@ import * as sinonChai from 'sinon-chai';
 import { SinonStub } from 'sinon';
 import { mockMembers } from '../../routes/members/members.test-helpers';
 import { AuthService } from './auth.service';
-import { mockRequests, mockUserName } from '../../../test-helpers/auth.test-helpers';
+import { mockRequests, mockUserName } from './auth.test-helpers';
 
 import * as dotEnv from 'dotenv';
 

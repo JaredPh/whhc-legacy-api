@@ -3,7 +3,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Tag } from './tags.entity';
-import { TagResult } from './tags.models';
 
 @Component()
 export class TagsService {
@@ -12,8 +11,7 @@ export class TagsService {
         @InjectRepository(Tag) private readonly tagRepository: Repository<Tag>,
     ) {}
 
-    public async findAll(): Promise<TagResult[]> {
-        return (await this.tagRepository.find())
-            .map(i => new TagResult(i));
+    public async findAll(): Promise<Tag[]> {
+        return await this.tagRepository.find();
     }
 }
