@@ -1,4 +1,4 @@
-import {Controller, Get, Query} from "@nestjs/common";
+import { Controller, Get, Param, Request } from '@nestjs/common';
 
 import { EventsService } from './events.service';
 import { EventsResponse } from './events.interfaces';
@@ -11,12 +11,22 @@ export class EventsController {
     ) {}
 
     @Get()
-    async getAllMembers(
-        @Query('count') count: string,
-        @Query('past') past: string,
+    async getAllEvents(
+        @Request() req: any,
     ): Promise<EventsResponse> {
-        const events = (await this.eventsService.findAll(+count, past === 'true'))
+        const queryParams = req.query;
+
+        const events = (await this.eventsService.findAll(queryParams))
             .sort((a, b) => a.start.localeCompare(b.start));
+
+        return { results: events };
+    }
+
+    @Get(':slug')
+    async getEvent(
+        @Param('slug') slug: any,
+    ): Promise<EventsResponse> {
+        const events = [ await this.eventsService.findOne(slug) ];
 
         return { results: events };
     }

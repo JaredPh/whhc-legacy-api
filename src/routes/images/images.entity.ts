@@ -7,7 +7,7 @@ export class Image {
     id: string;
 
     @Column()
-    extension: string;
+    ext: string;
 
     @Column()
     description: string;

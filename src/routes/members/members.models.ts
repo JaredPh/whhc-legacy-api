@@ -1,13 +1,16 @@
 import { IsString } from 'class-validator';
 
 import { Member } from './members.entity';
+import { ImageResult } from '../images/images.models';
 
 export class MemberResult {
     id: number;
     email: string;
     fname: string;
     lname: string;
-    roles: string[];
+    avatar: ImageResult;
+
+    // roles: string[];
 
     constructor(data: Member) {
         this.id = data.id;
@@ -17,7 +20,9 @@ export class MemberResult {
         this.fname = data.fname;
         this.lname = data.lname;
 
-        this.roles = data.roles.map(role => role.id);
+        this.avatar = new ImageResult(data.avatar);
+
+        // this.roles = data.roles.map(role => role.id);
     }
 }
 

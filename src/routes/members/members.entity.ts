@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne, JoinColumn} from "typeorm";
 
 import { Role } from '../../utils/auth/role.entity';
+import {Image} from "../images/images.entity";
 
 @Entity('members')
 export class Member {
@@ -22,6 +23,10 @@ export class Member {
 
     @Column()
     gender: string;
+
+    @ManyToOne(type => Image, { eager: true, nullable: false })
+    @JoinColumn()
+    avatar: Image;
 
     @ManyToMany(type => Role, { eager: true })
     @JoinTable({

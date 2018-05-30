@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryColumn, ManyToOne, ManyToMany, JoinColumn, JoinT
 import { Image } from '../images/images.entity';
 import { Location } from '../locations/locations.entity';
 import { Tag } from '../tags/tags.entity';
+import { Member } from '../members/members.entity';
 
 @Entity('events')
 export class Event {
@@ -11,6 +12,9 @@ export class Event {
 
     @Column({ nullable: false })
     heading: string;
+
+    @Column({ length: '4000', nullable: false })
+    body: string;
 
     @Column({ type: 'datetime', nullable: false })
     start: Date;
@@ -22,9 +26,17 @@ export class Event {
     @JoinColumn()
     thumb: Image;
 
+    @ManyToOne(type => Image, { eager: true, nullable: false })
+    @JoinColumn()
+    background: Image;
+
     @ManyToOne(type => Location, { eager: true, nullable: true })
     @JoinColumn()
     location: Location;
+
+    @ManyToOne(type => Member, { eager: true, nullable: false })
+    @JoinColumn()
+    author: Member;
 
     @ManyToMany(type => Tag, { eager: true, nullable: true, cascade: true })
     @JoinTable({
