@@ -1,15 +1,18 @@
 import { IsString } from 'class-validator';
 
 import { Member } from './members.entity';
+import { ImageResult } from '../images/images.models';
 
 export class MemberResult {
     id: number;
     email: string;
     fname: string;
     lname: string;
+    avatar: ImageResult;
+
     roles: string[];
 
-    constructor(data: Member) {
+    constructor(data: Member, includeRoles?: boolean) {
         this.id = data.id;
 
         this.email = data.email;
@@ -17,7 +20,13 @@ export class MemberResult {
         this.fname = data.fname;
         this.lname = data.lname;
 
-        this.roles = data.roles.map(role => role.id);
+        this.avatar = (data.avatar)
+            ? new ImageResult(data.avatar)
+            : null;
+
+        if (includeRoles) {
+            this.roles = data.roles.map(role => role.id);
+        }
     }
 }
 

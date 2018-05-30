@@ -1,4 +1,4 @@
-import { EncryptionService } from '../../../src/utils/encryption/encryption.service';
+import { EncryptionService } from './encryption.service';
 
 import * as chai from 'chai';
 
