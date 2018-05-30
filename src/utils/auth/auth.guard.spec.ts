@@ -8,7 +8,7 @@ import { SinonStub } from 'sinon';
 
 import { Repository } from 'typeorm';
 
-import { AuthGuard } from '../../../src/utils/auth/auth.guard';
+import { AuthGuard } from './auth.guard';
 import { mockMembers } from '../../routes/members/members.test-helpers';
 import { InternalServerErrorException } from '@nestjs/common';
 

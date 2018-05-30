@@ -1,9 +1,8 @@
 import { Component } from '@nestjs/common';
-import { Repository, MoreThan, LessThan} from 'typeorm';
+import { Repository, MoreThan, LessThan, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Event } from './events.entity';
-import { EventResult } from './events.models';
 
 @Component()
 export class EventsService {
@@ -12,27 +11,43 @@ export class EventsService {
         @InjectRepository(Event) private readonly eventRepository: Repository<Event>,
     ) {}
 
-    public async findAll(count: number, past: boolean = false): Promise<EventResult[]> {
+    public async find(queryParams: any = {}): Promise<Event[]> {
 
-        const now = new Date().toJSON();
-        let where;
+        const {
+            count,
+            exclude,
+            future,
+            past,
+            skip,
+        } = queryParams;
 
-        if (past) {
-            where = {
-                start: LessThan(now),
-            };
-        } else {
-            where = {
-                start: MoreThan(now),
-            };
+        const where: any = {};
+
+        if (exclude) {
+            where.id = Not(exclude);
         }
 
-        return (await this.eventRepository.find({
+        if (past || future) {
+            const now = new Date().toJSON();
+
+            if (past === 'true' || future === 'false') {
+                where.start = LessThan(now);
+            } else if (past === 'false' || future === 'true') {
+                where.start = MoreThan(now);
+            }
+        }
+
+        return await this.eventRepository.find({
             where,
+            skip,
             take: count,
             order: {
-                start: (past) ? 'DESC' : 'ASC',
+              start: (past) ? 'DESC' : 'ASC',
             },
-        })).map(e => new EventResult(e));
+        });
+    }
+
+    public async findOne(slug: string): Promise<Event> {
+        return await this.eventRepository.findOne(slug);
     }
 }

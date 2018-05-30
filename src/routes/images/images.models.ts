@@ -7,7 +7,7 @@ export class ImageResult {
     height: number;
 
     constructor(data: Image) {
-        this.url = `https://media.whhc.uk/public/${data.id}.${data.extension}`;
+        this.url = `https://media.whhc.uk/${data.id}.${data.ext}`; // Todo: make process.env
 
         this.description = data.description;
 

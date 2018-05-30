@@ -15,8 +15,5 @@ import { Image } from './images.entity';
     imports: [
         TypeOrmModule.forFeature([Image]),
     ],
-    exports: [
-        ImagesService,
-    ],
 })
 export class ImagesModule {}
