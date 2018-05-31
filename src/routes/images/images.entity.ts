@@ -1,10 +1,13 @@
-import { CreateDateColumn, Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('images')
 export class Image {
 
-    @PrimaryColumn()
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column({ unique: true })
+    name: string;
 
     @Column()
     ext: string;

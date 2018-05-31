@@ -5,6 +5,7 @@ import { ImageResult } from '../images/images.models';
 
 import { Image } from '../images/images.entity';
 
+/* Todo: make more elegant */
 const placeholderAvatarImage: Image = {
     id: '3ffe537a-f893-4824-9b50-5af5008acf01',
     ext: 'png',
