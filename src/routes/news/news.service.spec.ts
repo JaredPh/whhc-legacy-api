@@ -45,7 +45,7 @@ describe('NewsService', () => {
             newsRepositoryFindStub.restore();
         });
 
-        it('should return events from the repository unaltered ', async () => {
+        it('should return news from the repository unaltered ', async () => {
             const result: News[] = await newsService.find();
             expect(result).to.deep.equal(mockNews);
         });
@@ -82,7 +82,7 @@ describe('NewsService', () => {
             newsRepositoryFindStub.restore();
         });
 
-        it('should return events from the repository unaltered ', async () => {
+        it('should return news from the repository unaltered ', async () => {
             const result: News = await newsService.findOne('evnt-1');
             expect(result).to.deep.equal(mockNews[0]);
         });

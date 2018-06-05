@@ -14,7 +14,7 @@ chai.use(sinonChai);
 
 const expect = chai.expect;
 
-describe('NewsService', () => {
+describe('EventsService', () => {
     let eventRepository: EventRepository;
     let eventsService: EventsService;
 
@@ -24,7 +24,7 @@ describe('NewsService', () => {
             components: [
                 EventsService,
                 {
-                    provide: 'NewsRepository',
+                    provide: 'EventRepository',
                     useClass: EventRepository,
                 },
             ],

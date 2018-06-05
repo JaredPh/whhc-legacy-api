@@ -35,7 +35,7 @@ describe('NewsController', () => {
         newsController = module.get<NewsController>(NewsController);
     });
 
-    describe('getAllNews()', () => {
+    describe('getNewsArticles()', () => {
         let newsServiceFindStub: SinonStub;
         let response: any;
 
@@ -43,7 +43,7 @@ describe('NewsController', () => {
             newsServiceFindStub = sinon.stub(newsService, 'find')
                 .resolves(mockNews);
 
-            response = await newsController.getAllEvents({});
+            response = await newsController.getNewsArticles({ query: {}});
         });
 
         after(() => {
@@ -54,11 +54,11 @@ describe('NewsController', () => {
             expect(response).to.have.all.keys(['results']);
         });
 
-        it('should call the find method on the events service', () => {
+        it('should call the find method on the news service', () => {
             expect(newsServiceFindStub).to.have.been.called;
         });
 
-        it('should return the same number of tags as returned from the events service', () => {
+        it('should return the same number of tags as returned from the news service', () => {
             expect(response.results).to.be.an('array').of.length(mockNews.length);
         });
 
@@ -131,7 +131,7 @@ describe('NewsController', () => {
         // });
     });
 
-    // describe('getNews()', () => {
+    // describe('getNewsArticle()', () => {
     //     let eventsServiceFindOneStub: SinonStub;
     //     let response: any;
     //
@@ -139,7 +139,7 @@ describe('NewsController', () => {
     //         eventsServiceFindOneStub = sinon.stub(newsService, 'findOne')
     //             .resolves(mockNews[0]);
     //
-    //         response = await newsController.getNews('evnt-1');
+    //         response = await newsController.getNewsArticle('evnt-1');
     //     });
     //
     //     after(() => {

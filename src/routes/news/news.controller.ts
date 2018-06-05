@@ -14,7 +14,7 @@ export class NewsController {
     ) {}
 
     @Get()
-    async getAllNews(
+    async getNewsArticles(
         @Request() req: any,
     ): Promise<NewsResponse> {
         const queryParams = req.query;
@@ -34,7 +34,7 @@ export class NewsController {
     }
 
     @Get(':slug')
-    async getNews(
+    async getNewsArticle(
         @Param('slug') slug: any,
     ): Promise<NewsResponse> {
         const news = [ new NewsResult(await this.newsService.findOne(slug)) ];

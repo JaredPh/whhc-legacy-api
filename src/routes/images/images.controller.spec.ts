@@ -71,7 +71,7 @@ describe('ImagesController', () => {
 
         it('should return images with url equal to the value returned from the images service', () => {
             response.results.forEach((image, index) => {
-                const expectedPattern = new RegExp(`.*${mockImages[index].id}\.${mockImages[index].ext}$`);
+                const expectedPattern = new RegExp(`.*${mockImages[index].name}\.${mockImages[index].ext}$`);
                 expect(image.url).to.be.match(expectedPattern);
             });
         });
