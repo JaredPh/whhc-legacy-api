@@ -83,10 +83,12 @@ export class NewsService {
                 return {
                     id: n.id,
                     score: getTagScore(article.tags, n.tags) * getDateScore(n.date),
+                    date: n.date,
                 };
             })
             .sort((a, b) =>  b.score - a.score)
             .slice(0, 4)
+            .sort((a, b) =>  (b.date > a.date) ? 1 : -1)
             .map(t => t.id);
 
         return article;
