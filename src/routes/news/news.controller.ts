@@ -17,11 +17,16 @@ export class NewsController {
     ): Promise<NewsResponse> {
         const queryParams = req.query;
 
-        const similarNews = (await this.newsService.find())
-            .map(n => new NewsMetaResult(n));
+        let news = (await this.newsService.find(queryParams))
+            .map(n => new NewsResult(n));
 
-        const news = (await this.newsService.find(queryParams))
-            .map(n => new NewsResult(n, similarNews));
+        if (queryParams.tag) {
+            news = news.filter(n => n.tags.find(t => t.name === queryParams.tag));
+        }
+
+        if (queryParams.photos) {
+            news = news.filter(n => n.photos.length > 0);
+        }
 
         return { results: news };
     }
@@ -34,7 +39,7 @@ export class NewsController {
         const similarNews = (await this.newsService.find())
             .map(n => new NewsMetaResult(n));
 
-        const news = [ new NewsResult(await this.newsService.findOne(slug), similarNews) ];
+        const news = [ new NewsResult(await this.newsService.findOne(slug)) ];
 
         return { results: news };
     }

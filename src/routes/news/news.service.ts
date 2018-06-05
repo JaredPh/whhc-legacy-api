@@ -38,18 +38,4 @@ export class NewsService {
             },
         });
     }
-
-    public async findMetadata(): Promise<News[]> {
-        const now = new Date().toJSON();
-
-        const where: any = {
-            date: LessThan(now),
-        };
-
-        return await this.newsRepository.find({ where });
-    }
-
-    public async findOne(slug: string): Promise<News> {
-        return await this.newsRepository.findOne(slug);
-    }
 }

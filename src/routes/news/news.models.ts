@@ -55,7 +55,7 @@ export class NewsResult extends NewsMetaResult {
 
     similar: string[];
 
-    constructor(data: News, similar: NewsMetaResult[]) {
+    constructor(data: News) {
         super(data);
 
         this.thumb = new ImageResult(data.thumb);
@@ -68,22 +68,5 @@ export class NewsResult extends NewsMetaResult {
         this.body = data.body;
 
         this.author = new MemberResult(data.author);
-
-        this.similar = similar
-            .filter(n => n.slug !== this.slug)
-            .map(n => {
-                const tagScore: number = getTagScore(this.tags, n.tags);
-                const dateScore: number = getDateScore(n.date);
-
-                return {
-                    slug: n.slug,
-                    date: n.date,
-                    score: dateScore * tagScore,
-                };
-            })
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 3)
-            .sort((a, b) => b.date.localeCompare(a.date))
-            .map(n => n.slug);
     }
 }
