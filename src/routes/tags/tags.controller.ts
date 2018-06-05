@@ -4,7 +4,7 @@ import { TagsService } from './tags.service';
 import { TagsResponse } from './tags.interfaces';
 import { TagResult } from './tags.models';
 
-@Controller('images')
+@Controller('tags')
 export class TagsController {
 
     constructor(

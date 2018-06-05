@@ -68,30 +68,5 @@ describe('ImagesController', () => {
                 expect(image).to.be.have.all.keys(['url', 'description', 'width', 'height']);
             });
         });
-
-        it('should return images with url equal to the value returned from the images service', () => {
-            response.results.forEach((image, index) => {
-                const expectedPattern = new RegExp(`.*${mockImages[index].id}\.${mockImages[index].ext}$`);
-                expect(image.url).to.be.match(expectedPattern);
-            });
-        });
-
-        it('should return images with description equal to the value returned from the images service', () => {
-            response.results.forEach((image, index) => {
-                expect(image.description).to.be.equal(mockImages[index].description);
-            });
-        });
-
-        it('should return images with width equal to the value returned from the images service', () => {
-            response.results.forEach((image, index) => {
-                expect(image.width).to.be.equal(mockImages[index].width);
-            });
-        });
-
-        it('should return images with height equal to the value returned from the images service', () => {
-            response.results.forEach((image, index) => {
-                expect(image.height).to.be.equal(mockImages[index].height);
-            });
-        });
     });
 });

@@ -67,23 +67,5 @@ describe('LocationsController', () => {
                 expect(location).to.be.have.all.keys(['id', 'heading', 'address']);
             });
         });
-
-        it('should return images with description equal to the value returned from the images service', () => {
-            response.results.forEach((location, index) => {
-                expect(location.id).to.be.equal(mockLocations[index].id);
-            });
-        });
-
-        it('should return images with width equal to the value returned from the images service', () => {
-            response.results.forEach((location, index) => {
-                expect(location.heading).to.be.equal(mockLocations[index].heading);
-            });
-        });
-
-        it('should return images with height equal to the value returned from the images service', () => {
-            response.results.forEach((location, index) => {
-                expect(location.address).to.be.equal(mockLocations[index].address);
-            });
-        });
     });
 });
