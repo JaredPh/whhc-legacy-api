@@ -37,6 +37,7 @@
     "jsonwebtoken": "^8.2.0",
     "moment": "^2.22.0",
     "mysql": "^2.15.0",
+    "node-cron": "^1.2.1",
     "redis": "^2.7.1",
     "reflect-metadata": "^0.1.10",
     "rxjs": "^5.5.8",

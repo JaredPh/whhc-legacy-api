@@ -9,21 +9,24 @@ export class ImagesService {
 
 export const mockImages: Image[] = [
     {
-        id: 'imageOne',
+        id: 1,
+        name: 'imageOne',
         ext: 'png',
         width: 1,
         height: 2,
         description: 'image 1 desc',
     },
     {
-        id: 'imageTwo',
+        id: 2,
+        name: 'imageTwo',
         ext: 'gif',
         width: 3,
         height: 4,
         description: 'image 2 desc',
     },
     {
-        id: 'imageThree',
+        id: 3,
+        name: 'imageThree',
         ext: 'jpg',
         width: 5,
         height: 6,

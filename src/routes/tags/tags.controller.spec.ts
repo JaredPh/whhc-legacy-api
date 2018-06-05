@@ -67,11 +67,5 @@ describe('LocationsController', () => {
                 expect(tag).to.be.have.all.keys(['name']);
             });
         });
-
-        it('should return tags with id equal to the value returned from the images service', () => {
-            response.results.forEach((tag, index) => {
-                expect(tag.name).to.be.equal(mockTags[index].id);
-            });
-        });
     });
 });

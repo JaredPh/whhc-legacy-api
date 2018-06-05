@@ -7,6 +7,7 @@ import { ImagesModule } from './routes/images/images.module';
 import { LocationsModule } from './routes/locations/locations.module';
 import { MembersModule } from './routes/members/members.module';
 import { TagsModule } from './routes/tags/tags.module';
+import { NewsModule } from './routes/news/news.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TagsModule } from './routes/tags/tags.module';
       ImagesModule,
       LocationsModule,
       MembersModule,
+      NewsModule,
       TagsModule,
       TypeOrmModule.forRoot(),
   ],
