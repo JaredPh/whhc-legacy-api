@@ -206,27 +206,6 @@ describe('MemberController', () => {
             it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'avatar\', \'roles\']', () => {
                 expect(response.results[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'avatar', 'roles']);
             });
-
-            it('should return members with id equal to the value returned from the members service', () => {
-                expect(response.results[0].id).to.be.equal(mockMembers[0].id);
-            });
-
-            it('should return members with email equal to the value returned from the members service', () => {
-                expect(response.results[0].email).to.be.equal(mockMembers[0].email);
-            });
-
-            it('should return members with fname equal to the value returned from the members service', () => {
-                expect(response.results[0].fname).to.be.equal(mockMembers[0].fname);
-            });
-
-            it('should return members with lname equal to the value returned from the members service', () => {
-                expect(response.results[0].lname).to.be.equal(mockMembers[0].lname);
-            });
-
-            it('should return members with roles as an array of strings', () => {
-                expect(response.results[0].roles).to.be.an('array');
-                response.results[0].roles.forEach(role => expect(role).to.be.a('string'));
-            });
         });
 
         describe('adding a user to a new member', () => {
@@ -257,27 +236,6 @@ describe('MemberController', () => {
 
             it('should return each member with keys [\'id\', \'email\', \'fname\', \'lname\', \'avatar\', \'roles\']', () => {
                 expect(response.results[0]).to.be.have.all.keys(['id', 'email', 'fname', 'lname', 'avatar', 'roles']);
-            });
-
-            it('should return members with id equal to the value returned from the members service', () => {
-                expect(response.results[0].id).to.be.equal(mockMembers[0].id);
-            });
-
-            it('should return members with email equal to the value returned from the members service', () => {
-                expect(response.results[0].email).to.be.equal(mockMembers[0].email);
-            });
-
-            it('should return members with fname equal to the value returned from the members service', () => {
-                expect(response.results[0].fname).to.be.equal(mockMembers[0].fname);
-            });
-
-            it('should return members with lname equal to the value returned from the members service', () => {
-                expect(response.results[0].lname).to.be.equal(mockMembers[0].lname);
-            });
-
-            it('should return members with roles as an array of strings', () => {
-                expect(response.results[0].roles).to.be.an('array');
-                response.results[0].roles.forEach(role => expect(role).to.be.a('string'));
             });
         });
     });
