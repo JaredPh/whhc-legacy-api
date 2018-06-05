@@ -1,8 +1,10 @@
 import { Component } from '@nestjs/common';
-import { Repository, LessThan, Not } from 'typeorm';
+import { Repository, LessThan, In, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { News } from './news.entity';
+import { Tag } from '../tags/tags.entity';
+import * as moment from 'moment';
 
 @Component()
 export class NewsService {
@@ -15,6 +17,7 @@ export class NewsService {
 
         const {
             count,
+            include,
             exclude,
             skip,
         } = queryParams;
@@ -24,6 +27,10 @@ export class NewsService {
         const where: any = {
             date: LessThan(now),
         };
+
+        if (include) {
+            where.id = In(include.split(','));
+        }
 
         if (exclude) {
             where.id = Not(exclude);
@@ -37,5 +44,50 @@ export class NewsService {
               date: 'DESC',
             },
         });
+    }
+
+    public async findOne(slug: string): Promise<News> {
+        return await this.newsRepository.findOne(slug);
+    }
+
+    public async save(article: News): Promise<News> {
+        return await this.newsRepository.save(article);
+    }
+
+    public setSimilar(article: News, articles: News[]): News {
+        const getTagScore = (articleTags: Tag[], similarTags: Tag[]): number => {
+            const tagsToSearchFor: string[] = articleTags.map(t => t.id);
+
+            const matchCount: number = similarTags.reduce(
+                (total: number, tag) => (tagsToSearchFor.indexOf(tag.id) >= 0) ? total + 1 : total,
+                0,
+            );
+
+            const totalCount = tagsToSearchFor.length;
+
+            return Math.max(0.05, Math.pow(matchCount / totalCount, 2));
+        };
+
+        const getDateScore = (date: Date): number => {
+            const now = moment();
+            const then = moment(date);
+            const days = now.diff(then, 'days');
+
+            return Math.max(0.05, Math.pow(1 / days, 0.4));
+        };
+
+        article.similar = articles
+            .filter(n => n.id !== article.id)
+            .map((n) => {
+                return {
+                    id: n.id,
+                    score: getTagScore(article.tags, n.tags) * getDateScore(n.date),
+                };
+            })
+            .sort((a, b) =>  b.score - a.score)
+            .slice(0, 4)
+            .map(t => t.id);
+
+        return article;
     }
 }

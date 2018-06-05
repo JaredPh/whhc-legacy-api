@@ -60,4 +60,7 @@ export class News {
         },
     })
     tags: Tag[];
+
+    @Column({ type: 'simple-array', nullable: true })
+    similar: string[];
 }

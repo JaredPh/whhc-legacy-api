@@ -4,45 +4,11 @@ import { ImageResult } from '../images/images.models';
 import { MemberResult } from '../members/members.models';
 import { TagResult } from '../tags/tags.models';
 
-import * as moment from 'moment';
-
-const getTagScore = (articleTags: TagResult[], similarTags: TagResult[]): number => {
-    const tagsToSearchFor: string[] = articleTags.map(t => t.name);
-    const matchCount: number = similarTags.reduce(
-        (total: number, tag) => (tagsToSearchFor.indexOf(tag.name) >= 0) ? total + 1 : total,
-        0,
-    );
-    const totalCount = tagsToSearchFor.length;
-
-    return Math.max(0.05, Math.pow(matchCount / totalCount, 2));
-};
-
-const getDateScore = (date: string): number => {
-    const now = moment();
-    const then = moment(date);
-    const days = now.diff(then, 'days');
-
-    return Math.max(0.05, Math.pow(1 / days, 0.4));
-
-};
-
-export class NewsMetaResult {
+export class NewsResult {
     slug: string;
     date: string;
     tags: any;
 
-    constructor(data: News) {
-        this.slug = data.id;
-
-        this.date = data.date.toJSON();
-
-        this.tags = data.tags
-            .map(t => new TagResult(t))
-            .sort((a, b) => a.name.localeCompare(b.name));
-    }
-}
-
-export class NewsResult extends NewsMetaResult {
     thumb: ImageResult;
     background: ImageResult;
     photos: ImageResult[];
@@ -56,7 +22,13 @@ export class NewsResult extends NewsMetaResult {
     similar: string[];
 
     constructor(data: News) {
-        super(data);
+        this.slug = data.id;
+
+        this.date = data.date.toJSON();
+
+        this.tags = data.tags
+            .map(t => new TagResult(t))
+            .sort((a, b) => a.name.localeCompare(b.name));
 
         this.thumb = new ImageResult(data.thumb);
         this.background = new ImageResult(data.background);
@@ -68,5 +40,7 @@ export class NewsResult extends NewsMetaResult {
         this.body = data.body;
 
         this.author = new MemberResult(data.author);
+
+        this.similar = data.similar;
     }
 }

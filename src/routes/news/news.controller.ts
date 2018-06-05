@@ -1,8 +1,10 @@
-import { Controller, Get, Param, Request } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Request, HttpCode } from '@nestjs/common';
+
+import { UserRoles } from '../../utils/auth/auth.decorators';
 
 import { NewsService } from './news.service';
 import { NewsResponse } from './news.interfaces';
-import { NewsMetaResult, NewsResult } from './news.models';
+import { NewsResult } from './news.models';
 
 @Controller('news')
 export class NewsController {
@@ -35,12 +37,21 @@ export class NewsController {
     async getNews(
         @Param('slug') slug: any,
     ): Promise<NewsResponse> {
-
-        const similarNews = (await this.newsService.find())
-            .map(n => new NewsMetaResult(n));
-
         const news = [ new NewsResult(await this.newsService.findOne(slug)) ];
 
         return { results: news };
+    }
+
+    @Patch('similar')
+    @UserRoles(['admin'])
+    @HttpCode(204)
+    async setSimilarNews(
+    ): Promise<void> {
+        const news = await this.newsService.find({});
+
+        await news.forEach(async (n) => {
+            const article = this.newsService.setSimilar(n, news);
+            await this.newsService.save(article);
+        });
     }
 }
