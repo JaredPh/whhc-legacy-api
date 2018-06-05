@@ -55,6 +55,7 @@ export class NewsService {
     }
 
     public setSimilar(article: News, articles: News[]): News {
+
         const getTagScore = (articleTags: Tag[], similarTags: Tag[]): number => {
             const tagsToSearchFor: string[] = articleTags.map(t => t.id);
 

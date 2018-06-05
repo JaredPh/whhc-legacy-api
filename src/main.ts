@@ -35,7 +35,7 @@ const bootstrap = async (): Promise<void> => {
 
     cron.schedule('* 1 * * *', () => {
         const newsController = app.select(NewsModule).get(NewsController);
-        newsController.rateSimilarNews();
+        newsController.setSimilarNews();
     });
 };
 

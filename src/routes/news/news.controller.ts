@@ -26,7 +26,7 @@ export class NewsController {
             news = news.filter(n => n.tags.find(t => t.name === queryParams.tag));
         }
 
-        if (queryParams.photos) {
+        if (queryParams.photos === 'true') {
             news = news.filter(n => n.photos.length > 0);
         }
 
@@ -42,11 +42,7 @@ export class NewsController {
         return { results: news };
     }
 
-    @Patch('similar')
-    @UserRoles(['admin'])
-    @HttpCode(204)
-    async setSimilarNews(
-    ): Promise<void> {
+    async setSimilarNews(): Promise<void> {
         const news = await this.newsService.find({});
 
         await news.forEach(async (n) => {

@@ -50,25 +50,15 @@ describe('NewsService', () => {
             expect(result).to.deep.equal(mockNews);
         });
 
-        // it('should return events with exclude query from the repository unaltered ', async () => {
-        //     const result: News[] = await newsService.find({ exclude: 'x' });
-        //     expect(result).to.deep.equal(mockNews);
-        // });
-        //
-        // it('should return events with past query from the repository unaltered ', async () => {
-        //     const result: News[] = await newsService.find({ past: 'true' });
-        //     expect(result).to.deep.equal(mockNews);
-        // });
-        //
-        // it('should return events with future query from the repository unaltered ', async () => {
-        //     const result: News[] = await newsService.find({ future: 'true' });
-        //     expect(result).to.deep.equal(mockNews);
-        // });
-        //
-        // it('should return events with bad future and past query from the repository unaltered ', async () => {
-        //     const result: News[] = await newsService.find({ past: 'invalid', future: 'invalid' });
-        //     expect(result).to.deep.equal(mockNews);
-        // });
+        it('should return events with include query from the repository unaltered ', async () => {
+            const result: News[] = await newsService.find({ include: 'news-1' });
+            expect(result).to.deep.equal(mockNews);
+        });
+
+        it('should return events with exclude query from the repository unaltered ', async () => {
+            const result: News[] = await newsService.find({ exclude: 'news-1' });
+            expect(result).to.deep.equal(mockNews);
+        });
     });
 
     describe('findOne()', () => {
@@ -85,6 +75,48 @@ describe('NewsService', () => {
         it('should return news from the repository unaltered ', async () => {
             const result: News = await newsService.findOne('evnt-1');
             expect(result).to.deep.equal(mockNews[0]);
+        });
+    });
+
+    describe('ave()', () => {
+        let newsRepositorySaveStub: SinonStub;
+        let result: News;
+
+        before(async () => {
+            newsRepositorySaveStub = sinon.stub(newsRepository, 'save').returnsArg(0);
+            result = await newsService.save(mockNews[0]);
+        });
+
+        after(() => {
+            newsRepositorySaveStub.restore();
+        });
+
+        it('should call the save method on the news repository', () => {
+            expect(newsRepositorySaveStub).to.have.been.calledOnce;
+        });
+
+        it('should return the saved news article', () => {
+            expect(result).to.deep.equal(mockNews[0]);
+        });
+    });
+
+    describe('setSimilar()', () => {
+        let result: News;
+
+        before(async () => {
+            result = await newsService.setSimilar({
+                ...mockNews[0],
+                similar: [],
+            }, mockNews);
+        });
+
+        it('should return news a news item with similar set', () => {
+            const expected = {
+                ...mockNews[0],
+                similar: [mockNews[1].id, mockNews[2].id],
+            };
+
+            expect(result).to.deep.equal(expected);
         });
     });
 });
