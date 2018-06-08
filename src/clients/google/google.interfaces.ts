@@ -1,3 +1,5 @@
+import { ImageResult } from '../../routes/images/images.models';
+
 export interface GoogleDistanceRequest {
     destinations: string;
     key: string;
@@ -9,4 +11,9 @@ export interface GoogleDistanceRequest {
     arrival_time?: number;
     departure_time?: number;
     traffic_model?: string;
+}
+
+export interface GoogleMapImage {
+    url: string;
+    image: ImageResult;
 }

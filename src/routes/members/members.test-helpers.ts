@@ -24,7 +24,8 @@ export const mockMembers: Member[] = [
         ],
         gender: 'M',
         avatar: {
-            id: 'someUrl',
+            id: 2,
+            name: 'someUrl',
             ext: 'jpg',
             description: 'image-description',
             width: 1,
@@ -40,7 +41,8 @@ export const mockMembers: Member[] = [
         roles: [],
         gender: 'F',
         avatar: {
-            id: 'someUrl',
+            id: 1,
+            name: 'someUrl',
             ext: 'jpg',
             description: 'image-description',
             width: 1,
