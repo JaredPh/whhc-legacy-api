@@ -21,7 +21,7 @@ instance.use(compression());
 instance.use(helmet());
 instance.use(cookieParser());
 instance.use(cors({
-    origin: ['http://localhost:9442'],
+    origin: process.env.CORS_ORIGINS.split('|'),
 }));
 
 const bootstrap = async (): Promise<void> => {
