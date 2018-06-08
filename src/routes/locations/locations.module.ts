@@ -5,6 +5,8 @@ import { LocationsController } from './locations.controller';
 import { LocationsService } from './locations.service';
 import { Location } from './locations.entity';
 
+import { GoogleModule } from '../../clients/google/google.module';
+
 @Module({
     controllers: [
         LocationsController,
@@ -13,7 +15,11 @@ import { Location } from './locations.entity';
         LocationsService,
     ],
     imports: [
+        GoogleModule,
         TypeOrmModule.forFeature([Location]),
+    ],
+    exports: [
+        LocationsService,
     ],
 })
 export class LocationsModule {}
