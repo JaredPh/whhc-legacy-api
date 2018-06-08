@@ -8,7 +8,8 @@ import * as sinonChai from 'sinon-chai';
 import { SinonStub } from 'sinon';
 
 import { LocationsController } from './locations.controller';
-import { LocationsService, mockLocations } from './locations.test-helpers';
+import { LocationsService, mockDriving, mockLocations, mockTransit } from './locations.test-helpers';
+import { LocationTransportResult } from './locations.interfaces';
 
 chai.use(sinonChai);
 
@@ -35,37 +36,39 @@ describe('LocationsController', () => {
         locationsController = module.get<LocationsController>(LocationsController);
     });
 
-    describe('getAllLocations()', () => {
-        let locationsServiceFindAllStub: SinonStub;
+    describe('getTransport()', () => {
+        let locationsServiceFindOneStub: SinonStub;
+        let locationsServiceGetTransportStub: SinonStub;
+        const mockTransportResult: LocationTransportResult = {
+            driving: mockDriving,
+            transit: mockTransit,
+        };
+
         let response: any;
-
         before(async () => {
-            locationsServiceFindAllStub = sinon.stub(locationsService, 'findAll')
-                .resolves(mockLocations);
+            locationsServiceFindOneStub = sinon.stub(locationsService, 'findOne')
+                .resolves(mockLocations[0]);
 
-            response = await locationsController.getAllLocations();
+            locationsServiceGetTransportStub = sinon.stub(locationsService, 'getTransport')
+                .resolves(mockTransportResult);
+
+            response = await locationsController.getTransport(1);
         });
 
         after(() => {
-            locationsServiceFindAllStub.restore();
+            locationsServiceFindOneStub.restore();
         });
 
         it('should return an object with key [\'results\']', () => {
             expect(response).to.have.all.keys(['results']);
         });
 
-        it('should call the findAll method on the images service', () => {
-            expect(locationsServiceFindAllStub).to.have.been.called;
+        it('should call the findOne method on the images service', () => {
+            expect(locationsServiceFindOneStub).to.have.been.called;
         });
 
-        it('should return the same number of locations as returned from the images service', () => {
-            expect(response.results).to.be.an('array').of.length(mockLocations.length);
-        });
-
-        it('should return each image with keys [\'id\', \'heading\', \'address\']', () => {
-            response.results.forEach((location) => {
-                expect(location).to.be.have.all.keys(['id', 'heading', 'address']);
-            });
+        it('should not alter the result', () => {
+            expect(response.results[0]).to.deep.equal(mockTransportResult);
         });
     });
 });
