@@ -87,7 +87,7 @@ export class NewsService {
                 };
             })
             .sort((a, b) =>  b.score - a.score)
-            .slice(0, 4)
+            .slice(0, 3)
             .sort((a, b) =>  (b.date > a.date) ? 1 : -1)
             .map(t => t.id);
 

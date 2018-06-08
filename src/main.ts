@@ -33,7 +33,7 @@ const bootstrap = async (): Promise<void> => {
 
     await app.listen(3000);
 
-    cron.schedule('* 1 * * *', () => {
+    cron.schedule('0 * * * *', () => {
         const newsController = app.select(NewsModule).get(NewsController);
         newsController.setSimilarNews();
     });

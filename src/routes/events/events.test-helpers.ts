@@ -11,6 +11,7 @@ export class EventRepository extends Repository<Event> {}
 export class EventsService {
     find() {}
     findOne() {}
+    getMap() {}
 }
 
 export const mockEvents: Event[] = [

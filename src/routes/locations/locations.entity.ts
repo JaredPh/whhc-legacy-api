@@ -11,4 +11,7 @@ export class Location {
 
     @Column()
     address: string;
+
+    @Column()
+    home: boolean;
 }
