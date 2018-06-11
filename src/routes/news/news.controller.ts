@@ -46,7 +46,7 @@ export class NewsController {
         const news = await this.newsService.find({});
 
         await news.forEach(async (n) => {
-            const article = this.newsService.setSimilar(n, news);
+            const article = this.newsService.setSimilar(n, news, 4);
             await this.newsService.save(article);
         });
     }
