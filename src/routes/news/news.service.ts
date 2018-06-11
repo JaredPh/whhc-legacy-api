@@ -54,7 +54,7 @@ export class NewsService {
         return await this.newsRepository.save(article);
     }
 
-    public setSimilar(article: News, articles: News[]): News {
+    public setSimilar(article: News, articles: News[], count: number = 4): News {
 
         const getTagScore = (articleTags: Tag[], similarTags: Tag[]): number => {
             const tagsToSearchFor: string[] = articleTags.map(t => t.id);
@@ -87,7 +87,7 @@ export class NewsService {
                 };
             })
             .sort((a, b) =>  b.score - a.score)
-            .slice(0, 3)
+            .slice(0, count)
             .sort((a, b) =>  (b.date > a.date) ? 1 : -1)
             .map(t => t.id);
 
