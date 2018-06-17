@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PagesController } from './pages.controller';
 import { PagesService } from './pages.service';
 import { Page } from './pages.entity';
+import { LocationsModule } from '../locations/locations.module';
 
 @Module({
     controllers: [
@@ -13,6 +14,7 @@ import { Page } from './pages.entity';
         PagesService,
     ],
     imports: [
+        LocationsModule,
         TypeOrmModule.forFeature([Page]),
     ],
 })

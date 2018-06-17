@@ -11,23 +11,15 @@ export class PagesService {
         @InjectRepository(Page) private readonly pageRepository: Repository<Page>,
     ) {}
 
-    public async findAll(): Promise<Page[]> {
-        return await this.pageRepository.find();
+    public async findRoots(): Promise<Page[]> {
+        return await this.pageRepository.createQueryBuilder('pages')
+            .leftJoinAndSelect('pages.children', 'children')
+            .leftJoinAndSelect('children.children', 'grandChildren')
+            .where('pages.parentId IS NULL')
+            .getMany();
     }
 
-    public async findOne(id: string, options?: { ancestors?: boolean; descendants?: boolean }): Promise<Page> {
-        let relations = [];
-
-        if (options.ancestors) {
-            relations = [...relations, 'parent', 'parent.parent'];
-        }
-
-        if (options.descendants) {
-            relations = [...relations, 'children', 'children.children'];
-        }
-
-        return await this.pageRepository.findOne(id, {
-            relations,
-        });
+    public async findOne(id: string): Promise<Page> {
+        return await this.pageRepository.findOne(id, { relations: ['children']});
     }
 }

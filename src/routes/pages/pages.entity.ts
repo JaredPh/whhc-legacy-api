@@ -21,7 +21,7 @@ export class Page {
     banner: Image;
 
     @Column({ length: '16', nullable: false })
-    type: 'location' | 'contacts' | 'custom';
+    type: 'location' | 'contacts' | 'custom' | 'landing';
 
     @Column({ nullable: true })
     reference: number;

@@ -19,12 +19,16 @@ export class EventsController {
     ): Promise<EventsResponse> {
         const queryParams = req.query;
 
-        const events = (await this.eventsService.find(queryParams))
+        let events = (await this.eventsService.find(queryParams))
             .map((e) => {
                 const event = new EventResult(e);
                 event.location.setMap(this.locationsService.getMap(event.location));
                 return event;
             });
+
+        if (queryParams.tag) {
+            events = events.filter(n => n.tags.find(t => t.name === queryParams.tag));
+        }
 
         return { results: events };
     }

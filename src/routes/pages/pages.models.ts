@@ -1,28 +1,38 @@
 import { Page } from './pages.entity';
 import { ImageResult } from '../images/images.models';
+import { LocationResult } from '../locations/locations.models';
 
-export class PageResult {
+export class PageSummaryResult {
     banner: ImageResult;
-    body: string;
     heading: string;
-    path: string;
     slug: string;
-    type: string;
-    reference: number;
-    weight: number;
 
     constructor(data: Page) {
         this.banner = new ImageResult(data.banner);
-        this.body = data.body;
         this.heading = data.heading;
-        this.path = '';
         this.slug = data.id;
-        this.type = data.type;
-        this.weight = data.weight;
+    }
+}
 
-        if (data.reference) {
-            this.reference = data.reference;
-        }
+export class PageResult extends PageSummaryResult{
+    // banner: ImageResult;
+    body: string;
+    // heading: string;
+    path: string;
+    // slug: string;
+    type: string;
+    reference?: LocationResult | PageSummaryResult[];
+    // weight: number;
+
+    constructor(data: Page) {
+        super(data);
+        // this.banner = new ImageResult(data.banner);
+        this.body = data.body;
+        // this.heading = data.heading;
+        this.path = '';
+        // this.slug = data.id;
+        this.type = data.type;
+        // this.weight = data.weight;
 
         let x = data.parent;
         let path = '';
@@ -32,6 +42,10 @@ export class PageResult {
         }
 
         this.path = path;
+    }
+
+    setReference(reference: LocationResult | PageSummaryResult[]) {
+        this.reference = reference;
     }
 }
 
@@ -47,7 +61,9 @@ export class PageTree{
         this.path = `${path}/${this.slug}`;
 
         if (data.children) {
-            this.children = data.children.map(c => new PageTree(c, this.path));
+            this.children = data.children
+                .sort((a, b) => a.weight - b.weight)
+                .map(c => new PageTree(c, this.path));
         }
     }
 }
