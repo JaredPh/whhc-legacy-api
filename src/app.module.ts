@@ -6,6 +6,7 @@ import { EventsModule } from './routes/events/events.module';
 import { ImagesModule } from './routes/images/images.module';
 import { LocationsModule } from './routes/locations/locations.module';
 import { MembersModule } from './routes/members/members.module';
+import { PagesModule } from './routes/pages/pages.module';
 import { TagsModule } from './routes/tags/tags.module';
 import { NewsModule } from './routes/news/news.module';
 
@@ -17,6 +18,7 @@ import { NewsModule } from './routes/news/news.module';
       LocationsModule,
       MembersModule,
       NewsModule,
+      PagesModule,
       TagsModule,
       TypeOrmModule.forRoot(),
   ],
