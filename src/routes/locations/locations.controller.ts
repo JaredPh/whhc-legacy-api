@@ -11,6 +11,15 @@ export class LocationsController {
         private readonly locationsService: LocationsService,
     ) {}
 
+    @Get(':id')
+    async getLocation(
+        @Param('id') id: number,
+    ): Promise<any> {
+        const location = new LocationResult(await this.locationsService.findOne(id));
+
+        return { results: [ location ] };
+    }
+
     @Get(':id/transport')
     async getTransport(
         @Param('id') id: number,
