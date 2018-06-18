@@ -1,5 +1,8 @@
 import { Page } from './pages.entity';
 import { mockImages } from '../images/images.test-helpers';
+import { Repository } from 'typeorm';
+
+export class PageRepository extends Repository<Page> {}
 
 export class PagesService {
     findOne() {}
