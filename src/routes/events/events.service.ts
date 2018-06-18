@@ -37,8 +37,6 @@ export class EventsService {
             }
         }
 
-        console.log('===>', queryParams);
-
         return await this.eventRepository.find({
             where,
             skip,

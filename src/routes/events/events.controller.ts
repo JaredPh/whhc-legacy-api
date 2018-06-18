@@ -26,7 +26,7 @@ export class EventsController {
                 return event;
             });
 
-        if (queryParams.tag) {
+        if (queryParams && queryParams.tag) {
             events = events.filter(n => n.tags.find(t => t.name === queryParams.tag));
         }
 
