@@ -27,7 +27,7 @@ export class Page {
     type: 'location' | 'contacts' | 'custom' | 'landing';
 
     @Column({ nullable: true })
-    reference: number;
+    reference?: number;
 
     @Column({ nullable: false })
     heading: string;

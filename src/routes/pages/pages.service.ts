@@ -19,7 +19,7 @@ export class PagesService {
             .getMany();
     }
 
-    public async findOne(id: string): Promise<Page> {
+    public async findOne(id: number): Promise<Page> {
         return await this.pageRepository.findOne(id, { relations: ['children']});
     }
 }

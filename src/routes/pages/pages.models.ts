@@ -17,29 +17,14 @@ export class PageSummaryResult {
 }
 
 export class PageResult extends PageSummaryResult{
-    path: string;
     body: string;
     type: string;
     reference?: LocationResult | PageSummaryResult[];
-    // weight: number;
 
     constructor(data: Page) {
-        super(data);
-        // this.banner = new ImageResult(data.banner);
+        super(data);;
         this.body = data.body;
         this.type = data.type;
-        // this.heading = data.heading;
-        // this.slug = data.id;
-        // this.weight = data.weight;
-
-        let x = data.parent;
-        let path = '';
-        while (x) {
-            path = `/${x.id}${path}`;
-            x = x.parent;
-        }
-
-        this.path = path;
     }
 
     setReference(reference: LocationResult | PageSummaryResult[]) {

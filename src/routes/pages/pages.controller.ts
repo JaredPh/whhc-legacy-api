@@ -21,11 +21,11 @@ export class PagesController {
         return { results: results.map(r => new PageTree(r)) };
     }
 
-    @Get(':slug')
+    @Get(':id')
     async getPage(
-        @Param('slug') slug: string,
+        @Param('id') id: number,
     ): Promise<PagesResponse> {
-        const result = await this.pagesService.findOne(slug);
+        const result = await this.pagesService.findOne(id);
         if (result) {
             const page = new PageResult(result);
 
