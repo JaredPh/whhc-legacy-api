@@ -3,23 +3,22 @@ import { ImageResult } from '../images/images.models';
 import { LocationResult } from '../locations/locations.models';
 
 export class PageSummaryResult {
-    banner: ImageResult;
-    heading: string;
+    id: number;
     slug: string;
+    heading: string;
+    banner: ImageResult;
 
     constructor(data: Page) {
-        this.banner = new ImageResult(data.banner);
+        this.id = data.id;
+        this.slug = data.slug;
         this.heading = data.heading;
-        this.slug = data.id;
+        this.banner = new ImageResult(data.banner);
     }
 }
 
 export class PageResult extends PageSummaryResult{
-    // banner: ImageResult;
-    body: string;
-    // heading: string;
     path: string;
-    // slug: string;
+    body: string;
     type: string;
     reference?: LocationResult | PageSummaryResult[];
     // weight: number;
@@ -28,10 +27,9 @@ export class PageResult extends PageSummaryResult{
         super(data);
         // this.banner = new ImageResult(data.banner);
         this.body = data.body;
-        // this.heading = data.heading;
-        this.path = '';
-        // this.slug = data.id;
         this.type = data.type;
+        // this.heading = data.heading;
+        // this.slug = data.id;
         // this.weight = data.weight;
 
         let x = data.parent;
@@ -50,13 +48,15 @@ export class PageResult extends PageSummaryResult{
 }
 
 export class PageTree{
+    id: number;
     slug: string;
     path: string;
     heading: string;
     children: PageTree[];
 
     constructor(data, path: string = '') {
-        this.slug = data.id;
+        this.id = data.id;
+        this.slug = data.slug;
         this.heading = data.heading;
         this.path = `${path}/${this.slug}`;
 

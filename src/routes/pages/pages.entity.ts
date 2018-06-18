@@ -1,11 +1,14 @@
-import { Entity, Column, ManyToOne, OneToMany, PrimaryColumn, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, PrimaryColumn, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { Image } from '../images/images.entity';
 
 @Entity('pages')
 export class Page {
 
-    @PrimaryColumn()
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column({ nullable: false })
+    slug: string;
 
     @Column({ nullable: true })
     weight: number;
