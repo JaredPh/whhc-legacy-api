@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Club } from '../teams/clubs.entity';
 
 @Entity('locations')
 export class Location {
@@ -14,4 +15,18 @@ export class Location {
 
     @Column()
     home: boolean;
+
+    @ManyToMany(type => Club, { eager: true, nullable: true, cascade: true })
+    @JoinTable({
+        name: 'clubs_locations',
+        joinColumn: {
+            name: 'location',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'club',
+            referencedColumnName: 'id',
+        },
+    })
+    clubs: Club[];
 }
