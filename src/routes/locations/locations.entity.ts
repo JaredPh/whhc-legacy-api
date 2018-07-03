@@ -16,7 +16,7 @@ export class Location {
     @Column()
     home: boolean;
 
-    @ManyToMany(type => Club, { eager: true, nullable: true, cascade: true })
+    @ManyToMany(type => Club, { eager: false, nullable: true, cascade: true })
     @JoinTable({
         name: 'clubs_locations',
         joinColumn: {
