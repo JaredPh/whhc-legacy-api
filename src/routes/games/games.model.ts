@@ -1,4 +1,5 @@
 import { LocationResult } from '../locations/locations.models';
+import { ImageResult } from '../images/images.models';
 
 export class CompetitionResult { // todo: move
     id: string;
@@ -16,11 +17,15 @@ export class CompetitionResult { // todo: move
 
 export class ClubResult { // todo: move
     id: number;
+    short: string;
     name: string;
+    logo: ImageResult;
 
     constructor(data: any) {
         this.id = data.id;
+        this.short = data.short;
         this.name = data.name;
+        this.logo = new ImageResult(data.logo);
     }
 }
 
