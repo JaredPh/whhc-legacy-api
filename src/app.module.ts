@@ -12,10 +12,12 @@ import { PagesModule } from './routes/pages/pages.module';
 import { TagsModule } from './routes/tags/tags.module';
 import { TeamsModule } from './routes/teams/teams.module';
 import { NewsModule } from './routes/news/news.module';
+import { ClubsModule } from './routes/clubs/clubs.module';
 
 @Module({
   imports: [
       AuthModule,
+      ClubsModule,
       EventsModule,
       ImagesModule,
       GamesModule,

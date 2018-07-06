@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Location } from '../locations/locations.entity';
 import { Image } from '../images/images.entity';
+import { Team } from '../teams/teams.entity';
 
 @Entity('clubs')
 export class Club {
@@ -13,6 +14,9 @@ export class Club {
 
     @Column()
     short: string;
+
+    @OneToMany(type => Team, team => team.club)
+    teams: Team[];
 
     @ManyToOne(type => Image, { eager: true, nullable: false })
     @JoinColumn()

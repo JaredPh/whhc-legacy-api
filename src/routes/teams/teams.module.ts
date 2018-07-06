@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Team } from './teams.entity';
-import { Club } from './clubs.entity';
 
 @Module({
     controllers: [
@@ -10,7 +9,7 @@ import { Club } from './clubs.entity';
     components: [
     ],
     imports: [
-        TypeOrmModule.forFeature([Club, Team]),
+        TypeOrmModule.forFeature([Team]),
     ],
 })
 export class TeamsModule {}
