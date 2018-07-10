@@ -1,7 +1,7 @@
 import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne, JoinColumn} from "typeorm";
 
 import { Role } from '../../utils/auth/role.entity';
-import {Image} from "../images/images.entity";
+import {Image} from '../images/images.entity';
 
 @Entity('members')
 export class Member {
