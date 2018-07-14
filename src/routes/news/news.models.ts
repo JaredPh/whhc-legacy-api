@@ -3,6 +3,7 @@ import { News } from './news.entity';
 import { ImageResult } from '../images/images.models';
 import { MemberResult } from '../members/members.models';
 import { TagResult } from '../tags/tags.models';
+import * as moment from 'moment-timezone';
 
 export class NewsResult {
     slug: string;
@@ -24,7 +25,7 @@ export class NewsResult {
     constructor(data: News) {
         this.slug = data.id;
 
-        this.date = data.date.toJSON();
+        this.date = moment(data.date).tz('europe/london').toDate().toJSON();
 
         this.tags = data.tags
             .map(t => new TagResult(t))
