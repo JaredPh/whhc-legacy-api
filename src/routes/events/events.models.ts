@@ -4,6 +4,7 @@ import { ImageResult } from '../images/images.models';
 import { LocationResult } from '../locations/locations.models';
 import { MemberResult } from '../members/members.models';
 import { TagResult } from '../tags/tags.models';
+import * as moment from 'moment-timezone';
 
 export class EventResult {
     slug: string;
@@ -29,8 +30,9 @@ export class EventResult {
         this.heading = data.heading;
         this.body = data.body;
 
-        this.start = data.start.toJSON();
-        this.end = data.end.toJSON();
+        this.start = moment(data.start).tz('europe/london').toDate().toJSON();
+
+        this.end = moment(data.end).tz('europe/london').toDate().toJSON();
 
         this.author = new MemberResult(data.author);
 
