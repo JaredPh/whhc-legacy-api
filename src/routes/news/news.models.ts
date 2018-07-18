@@ -8,7 +8,7 @@ import * as moment from 'moment-timezone';
 export class NewsResult {
     slug: string;
     date: string;
-    tags: any;
+    tags: TagResult[];
 
     thumb: ImageResult;
     background: ImageResult;
@@ -16,6 +16,7 @@ export class NewsResult {
     video: string;
 
     heading: string;
+    description: string;
     body: string;
 
     author: MemberResult;
@@ -38,6 +39,7 @@ export class NewsResult {
         this.video = data.video;
 
         this.heading = data.heading;
+        this.description = data.description;
         this.body = data.body;
 
         this.author = new MemberResult(data.author);

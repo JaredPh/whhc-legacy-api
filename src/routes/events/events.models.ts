@@ -12,6 +12,7 @@ export class EventResult {
     background: ImageResult;
 
     heading: string;
+    description: string;
     body: string;
 
     start: string;
@@ -28,6 +29,7 @@ export class EventResult {
         this.background = new ImageResult(data.background);
 
         this.heading = data.heading;
+        this.description = data.description;
         this.body = data.body;
 
         this.start = moment(data.start).tz('europe/london').toDate().toJSON();

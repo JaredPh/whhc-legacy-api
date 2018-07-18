@@ -8,7 +8,7 @@ import * as sinonChai from 'sinon-chai';
 import { SinonStub } from 'sinon';
 
 import { PagesController } from './pages.controller';
-import { mockPages, mockPageTree, PagesService } from './pages.test-helpers';
+import { expectedPageKeys, expectedPageTreeKeys, mockPages, mockPageTree, PagesService } from './pages.test-helpers';
 import { mockLocations, LocationsService } from '../locations/locations.test-helpers';
 import { HttpException } from '@nestjs/common';
 
@@ -70,12 +70,12 @@ describe('PagesController', () => {
             expect(response.results).to.be.an('array').of.length(2);
         });
 
-        it('should return an pageTree with keys [\'children\', \'heading\', \'id\', \'path\', \'slug\']', () => {
-            expect(response.results[0]).to.be.have.all.keys(['children', 'heading', 'id', 'path', 'slug']);
+        it('should return an pageTree with expected keys', () => {
+            expect(response.results[0]).to.be.have.all.keys(expectedPageTreeKeys);
         });
 
-        it('should return children with keys [\'children\', \'heading\', \'id\', \'path\', \'slug\']', () => {
-            expect(response.results[0].children[0]).to.be.have.all.keys(['children', 'heading', 'id', 'path', 'slug']);
+        it('should return children with expected keys', () => {
+            expect(response.results[0].children[0]).to.be.have.all.keys(expectedPageTreeKeys);
         });
     });
 
@@ -116,8 +116,8 @@ describe('PagesController', () => {
                 expect(response.results).to.be.an('array').of.length(1);
             });
 
-            it('should return an event with keys [\'banner\', \'body\', \'heading\', \'id\', \'reference\', \'slug\', \'type\']', () => {
-                expect(response.results[0]).to.be.have.all.keys(['banner', 'body', 'heading', 'id', 'reference', 'slug', 'type']);
+            it('should return an event with expected keys', () => {
+                expect(response.results[0]).to.be.have.all.keys(expectedPageKeys);
             });
         });
 
@@ -157,8 +157,8 @@ describe('PagesController', () => {
                 expect(response.results).to.be.an('array').of.length(1);
             });
 
-            it('should return an event with keys [\'banner\', \'body\', \'heading\', \'id\', \'reference\', \'slug\', \'type\']', () => {
-                expect(response.results[0]).to.be.have.all.keys(['banner', 'body', 'heading', 'id', 'reference', 'slug', 'type']);
+            it('should return an event with expected keys', () => {
+                expect(response.results[0]).to.be.have.all.keys(expectedPageKeys);
             });
         });
 
@@ -198,8 +198,8 @@ describe('PagesController', () => {
                 expect(response.results).to.be.an('array').of.length(1);
             });
 
-            it('should return an event with keys [\'banner\', \'body\', \'heading\', \'id\', \'reference\', \'slug\', \'type\']', () => {
-                expect(response.results[0]).to.be.have.all.keys(['banner', 'body', 'heading', 'id', 'reference', 'slug', 'type']);
+            it('should return an event with expected keys', () => {
+                expect(response.results[0]).to.be.have.all.keys(expectedPageKeys);
             });
         });
 
