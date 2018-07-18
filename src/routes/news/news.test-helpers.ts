@@ -15,10 +15,26 @@ export class NewsService {
     setSimilar() {}
 }
 
+export const expectedNewsKeys = [
+    'author',
+    'background',
+    'body',
+    'date',
+    'description',
+    'heading',
+    'photos',
+    'slug',
+    'similar',
+    'tags',
+    'thumb',
+    'video',
+];
+
 export const mockNews: News[] = [
     {
         id: 'news-1',
         heading: 'News One',
+        description: 'News One Description',
         body: 'News One Body',
         video: 'abcdefg',
         date: new Date(),
@@ -32,6 +48,7 @@ export const mockNews: News[] = [
     {
         id: 'news-2',
         heading: 'News Two',
+        description: 'News Two Description',
         body: 'News Two Body',
         video: 'abcdefg',
         date: new Date(),
@@ -45,6 +62,7 @@ export const mockNews: News[] = [
     {
         id: 'news-3',
         heading: 'News Three',
+        description: 'News Three Description',
         body: 'News Three Body',
         video: 'abcdefg',
         date: new Date(),

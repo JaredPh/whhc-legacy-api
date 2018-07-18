@@ -8,7 +8,7 @@ import * as sinonChai from 'sinon-chai';
 import { SinonStub } from 'sinon';
 
 import { NewsController } from './news.controller';
-import { NewsService, mockNews } from './news.test-helpers';
+import { NewsService, mockNews, expectedNewsKeys } from './news.test-helpers';
 import { mockTags } from '../tags/tags.test-helpers';
 
 chai.use(sinonChai);
@@ -66,7 +66,7 @@ describe('NewsController', () => {
 
             it('should return each events with keys [\'author\', \'background\', \'body\', \'date\', \'heading\', \'photos\', \'slug\', \'similar\', \'tags\', \'thumb\', \'video\']', () => {
                 response.results.forEach((event) => {
-                    expect(event).to.be.have.all.keys(['author', 'background', 'body', 'date', 'heading', 'photos', 'slug', 'similar', 'tags', 'thumb', 'video']);
+                    expect(event).to.be.have.all.keys(expectedNewsKeys);
                 });
             });
         });
@@ -98,9 +98,9 @@ describe('NewsController', () => {
                 expect(response.results).to.be.an('array').of.length(2);
             });
 
-            it('should return each events with keys [\'author\', \'background\', \'body\', \'date\', \'heading\', \'photos\', \'slug\', \'similar\', \'tags\', \'thumb\', \'video\']', () => {
+            it('should return each events with expected keys', () => {
                 response.results.forEach((event) => {
-                    expect(event).to.be.have.all.keys(['author', 'background', 'body', 'date', 'heading', 'photos', 'slug', 'similar', 'tags', 'thumb', 'video']);
+                    expect(event).to.be.have.all.keys(expectedNewsKeys);
                 });
             });
         });
@@ -132,9 +132,9 @@ describe('NewsController', () => {
                 expect(response.results).to.be.an('array').of.length(1);
             });
 
-            it('should return each events with keys [\'author\', \'background\', \'body\', \'date\', \'heading\', \'photos\', \'slug\', \'similar\', \'tags\', \'thumb\', \'video\']', () => {
+            it('should return each events with expected keys', () => {
                 response.results.forEach((event) => {
-                    expect(event).to.be.have.all.keys(['author', 'background', 'body', 'date', 'heading', 'photos', 'slug', 'similar', 'tags', 'thumb', 'video']);
+                    expect(event).to.be.have.all.keys(expectedNewsKeys);
                 });
             });
         });
@@ -168,9 +168,9 @@ describe('NewsController', () => {
             expect(response.results).to.be.an('array').of.length(1);
         });
 
-        it('should return each events with keys [\'author\', \'background\', \'body\', \'date\', \'heading\', \'photos\', \'slug\', \'similar\', \'tags\', \'thumb\', \'video\']', () => {
+        it('should return each events with expected keys', () => {
             response.results.forEach((event) => {
-                expect(event).to.be.have.all.keys(['author', 'background', 'body', 'date', 'heading', 'photos', 'slug', 'similar', 'tags', 'thumb', 'video']);
+                expect(event).to.be.have.all.keys(expectedNewsKeys);
             });
         });
     });

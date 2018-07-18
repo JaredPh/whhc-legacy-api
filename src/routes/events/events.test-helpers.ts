@@ -14,10 +14,33 @@ export class EventsService {
     getMap() {}
 }
 
+export const expectedEventKeys = [
+    'author',
+    'background',
+    'body',
+    'description',
+    'end',
+    'heading',
+    'location',
+    'slug',
+    'start',
+    'tags',
+    'thumb',
+];
+
+export const expectedEventLocationKeys = [
+    'id',
+    'home',
+    'heading',
+    'address',
+    'map',
+];
+
 export const mockEvents: Event[] = [
     {
         id: 'evnt-1',
         heading: 'event one',
+        description: 'event one description',
         body: '<p>bodu</p>',
         start: new Date(),
         end: new Date(),
@@ -30,6 +53,7 @@ export const mockEvents: Event[] = [
     {
         id: 'evnt-2',
         heading: 'event two',
+        description: 'event two description',
         body: '<p>body</p>',
         start: new Date(),
         end: new Date(),

@@ -12,6 +12,9 @@ export class News {
     @Column({ nullable: false })
     heading: string;
 
+    @Column({ length: '155', nullable: false })
+    description: string;
+
     @Column({ length: '4000', nullable: false })
     body: string;
 
