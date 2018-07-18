@@ -8,7 +8,7 @@ import * as sinonChai from 'sinon-chai';
 import { SinonStub } from 'sinon';
 
 import { EventsController } from './events.controller';
-import { EventsService, mockEvents } from './events.test-helpers';
+import { EventsService, expectedEventKeys, expectedEventLocationKeys, mockEvents } from './events.test-helpers';
 import { LocationsService, mockMapImage } from '../locations/locations.test-helpers';
 
 chai.use(sinonChai);
@@ -80,15 +80,15 @@ describe('EventsController', () => {
                 expect(response.results).to.be.an('array').of.length(mockEvents.length);
             });
 
-            it('should return each events with keys [\'author\', \'background\', \'body\', \'end\', \'heading\', \'location\', \'slug\', \'start\', \'tags\', \'thumb\']', () => {
+            it('should return each events with expected keys', () => {
                 response.results.forEach((event) => {
-                    expect(event).to.be.have.all.keys(['author', 'background', 'body', 'end', 'heading', 'location', 'slug', 'start', 'tags', 'thumb']);
+                    expect(event).to.be.have.all.keys(expectedEventKeys);
                 });
             });
 
-            it('should return each location with keys [\'id\', \'home\', \'heading\', \'address\', \'map\']', () => {
+            it('should return each location with expected keys', () => {
                 response.results.forEach((event) => {
-                    expect(event.location).to.be.have.all.keys(['id', 'home', 'heading', 'address', 'map']);
+                    expect(event.location).to.be.have.all.keys(expectedEventLocationKeys);
                 });
             });
         });
@@ -130,15 +130,15 @@ describe('EventsController', () => {
                 expect(response.results).to.be.an('array').of.length(1);
             });
 
-            it('should return each events with keys [\'author\', \'background\', \'body\', \'end\', \'heading\', \'location\', \'slug\', \'start\', \'tags\', \'thumb\']', () => {
+            it('should return each events with expected keys', () => {
                 response.results.forEach((event) => {
-                    expect(event).to.be.have.all.keys(['author', 'background', 'body', 'end', 'heading', 'location', 'slug', 'start', 'tags', 'thumb']);
+                    expect(event).to.be.have.all.keys(expectedEventKeys);
                 });
             });
 
             it('should return each location with keys [\'id\', \'home\', \'heading\', \'address\', \'map\']', () => {
                 response.results.forEach((event) => {
-                    expect(event.location).to.be.have.all.keys(['id', 'home', 'heading', 'address', 'map']);
+                    expect(event.location).to.be.have.all.keys(expectedEventLocationKeys);
                 });
             });
         });
@@ -180,12 +180,12 @@ describe('EventsController', () => {
             expect(response.results).to.be.an('array').of.length(1);
         });
 
-        it('should return an event with keys [\'author\', \'background\', \'body\', \'end\', \'heading\', \'location\', \'slug\', \'start\', \'tags\', \'thumb\']', () => {
-            expect(response.results[0]).to.be.have.all.keys(['author', 'background', 'body', 'end', 'heading', 'location', 'slug', 'start', 'tags', 'thumb']);
+        it('should return an event with expected keys', () => {
+            expect(response.results[0]).to.be.have.all.keys(expectedEventKeys);
         });
 
-        it('should return location with keys [\'id\', \'home\', \'heading\', \'address\', \'map\']', () => {
-            expect(response.results[0].location).to.be.have.all.keys(['id', 'home', 'heading', 'address', 'map']);
+        it('should return location with expected keys', () => {
+            expect(response.results[0].location).to.be.have.all.keys(expectedEventLocationKeys);
         });
     });
 });

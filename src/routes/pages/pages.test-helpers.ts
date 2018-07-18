@@ -9,12 +9,32 @@ export class PagesService {
     findRoots() {}
 }
 
+export const expectedPageTreeKeys =  [
+    'children',
+    'heading',
+    'id',
+    'path',
+    'slug',
+];
+
+export const expectedPageKeys = [
+    'banner',
+    'body',
+    'heading',
+    'description',
+    'id',
+    'reference',
+    'slug',
+    'type',
+];
+
 export const mockPages: Page[] = [
     {
         id: 1,
         slug: 'page-one',
         weight: 2,
         heading: 'Page One',
+        description: 'Page One Description',
         body: '<p>Page One</p>',
         parent: null,
         children: [],
@@ -26,6 +46,7 @@ export const mockPages: Page[] = [
         slug: 'page-two',
         weight: 2,
         heading: 'Page Two',
+        description: 'Page Two Description',
         body: '<p>Page Two</p>',
         parent: null,
         children: [
@@ -34,6 +55,7 @@ export const mockPages: Page[] = [
                 slug: 'page-child-one',
                 weight: 2,
                 heading: 'Page Child One',
+                description: 'Page Child One Description',
                 body: '<p>Page Child One</p>',
                 parent: null,
                 children: [],
@@ -45,6 +67,7 @@ export const mockPages: Page[] = [
                 slug: 'page-child-two',
                 weight: 2,
                 heading: 'Page Child One',
+                description: 'Page Child One Description',
                 body: '<p>Page Child One</p>',
                 parent: null,
                 children: [],
@@ -60,6 +83,7 @@ export const mockPages: Page[] = [
         slug: 'page-three',
         weight: 2,
         heading: 'Page Three',
+        description: 'Page Three Description',
         body: '<p>Page Three</p>',
         parent: null,
         children: [],

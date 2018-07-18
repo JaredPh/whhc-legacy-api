@@ -17,12 +17,14 @@ export class PageSummaryResult {
 }
 
 export class PageResult extends PageSummaryResult{
+    description: string;
     body: string;
     type: string;
     reference?: LocationResult | PageSummaryResult[];
 
     constructor(data: Page) {
         super(data);;
+        this.description = data.description;
         this.body = data.body;
         this.type = data.type;
     }
