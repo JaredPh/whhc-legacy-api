@@ -7,6 +7,7 @@ import { GoogleDistanceRequest, GoogleMapImage } from './google.interfaces';
 import { LocationResult } from '../../routes/locations/locations.models';
 import { LocationDrivingResult, LocationTransitResult } from '../../routes/locations/locations.interfaces';
 import { ImageResult } from '../../routes/images/images.models';
+import * as crypto from 'crypto';
 
 @Component()
 export class GoogleMapsService {
@@ -120,11 +121,29 @@ export class GoogleMapsService {
 
         const query = Object.keys(mapParams).reduce((str, key) => `${str}&${key}=${mapParams[key].toString()}`, '').substr(1);
 
+        const path = `/maps/api/staticmap?${encodeURI(query)}`;
+
+        console.log(`https://maps.googleapis.com${path}&signature=${this.getSignature(path)}`);
+
         return {
-            url: `https://maps.googleapis.com/maps/api/staticmap?${encodeURI(query)}`,
-            description: `map of a ${location.heading}`,
+            url: `https://maps.googleapis.com${path}&signature=${this.getSignature(path)}`,
+            description: `map of ${location.heading}`,
             width,
             height,
         };
+    }
+
+    private getSignature(path) {
+        const secret = process.env.GOOGLE_MAP_SECRET;
+
+        const removeWebSafe = (safeEncodedString) => safeEncodedString.replace(/-/g, '+').replace(/_/g, '/');
+        const encodeBase64Hash = (key, data) => crypto.createHmac('sha1', key).update(data).digest('base64');
+        const makeWebSafe = (encodedString) => encodedString.replace(/\+/g, '-').replace(/\//g, '_');
+        const decodeBase64Hash = (code) => Buffer.from ? Buffer.from(code, 'base64') : new Buffer(code, 'base64');
+
+        const safeSecret = decodeBase64Hash(removeWebSafe(secret));
+        const hashedSignature = makeWebSafe(encodeBase64Hash(safeSecret, path));
+
+        return hashedSignature;
     }
 }
