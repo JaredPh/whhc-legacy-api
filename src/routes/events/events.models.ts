@@ -5,6 +5,7 @@ import { LocationResult } from '../locations/locations.models';
 import { MemberResult } from '../members/members.models';
 import { TagResult } from '../tags/tags.models';
 import * as moment from 'moment-timezone';
+import { Tag } from '../tags/tags.entity';
 
 export class EventResult {
     slug: string;
@@ -41,7 +42,7 @@ export class EventResult {
         this.location = new LocationResult(data.location);
 
         this.tags = data.tags
-            .map(t => new TagResult(t))
+            .map((t: Tag) => new TagResult(t))
             .sort((a, b) => a.name.localeCompare(b.name));
     }
 }

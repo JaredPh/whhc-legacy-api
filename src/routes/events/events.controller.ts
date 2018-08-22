@@ -4,6 +4,7 @@ import { EventsService } from './events.service';
 import { EventsResponse } from './events.interfaces';
 import { EventResult } from './events.models';
 import { LocationsService } from '../locations/locations.service';
+import { Tag } from '../tags/tags.entity';
 
 @Controller('events')
 export class EventsController {
@@ -19,16 +20,16 @@ export class EventsController {
     ): Promise<EventsResponse> {
         const queryParams = req.query;
 
-        let events = (await this.eventsService.find(queryParams))
-            .map((e) => {
-                const event = new EventResult(e);
-                event.location.setMap(this.locationsService.getMap(event.location));
-                return event;
-            });
+        let events: EventResult[] = (await this.eventsService.find(queryParams)).map(e => new EventResult(e));
 
         if (queryParams && queryParams.tag) {
-            events = events.filter(n => n.tags.find(t => t.name === queryParams.tag));
+            events = events.filter(n => n.tags.find((t: Tag) => t.id === queryParams.tag));
         }
+
+        events = events.map(e => {
+            e.location.setMap(this.locationsService.getMap(e.location));
+            return e;
+        });
 
         return { results: events };
     }
