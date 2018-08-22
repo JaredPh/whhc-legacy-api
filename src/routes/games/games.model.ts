@@ -1,5 +1,6 @@
 import { LocationResult } from '../locations/locations.models';
 import { ImageResult } from '../images/images.models';
+import { TeamResult } from '../teams/teams.models';
 
 export class CompetitionResult { // todo: move
     id: string;
@@ -29,23 +30,6 @@ export class ClubResult { // todo: move
     }
 }
 
-export class TeamResult { // todo: move
-    id: number;
-    short: string;
-    name: string;
-    type: string;
-    club: ClubResult;
-
-    constructor(data: any) {
-        this.id = data.id;
-        this.short = data.short;
-        this.name = data.name;
-        this.type = data.type;
-
-        this.club = new ClubResult(data.club);
-    }
-}
-
 export class GameResult {
     id: number;
     date: string;
@@ -57,6 +41,7 @@ export class GameResult {
     homeScore?: number;
     awayScore?: number;
     location?: LocationResult;
+    similar?: number[];
 
     constructor(data: any) {
         this.id = data.id;
@@ -72,5 +57,9 @@ export class GameResult {
         if (data.location) {
             this.location = new LocationResult(data.location);
         }
+    }
+
+    setSimilar(games: Game[]) {
+        this.similar = games.map(g => g.id);
     }
 }

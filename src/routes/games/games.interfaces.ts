@@ -10,4 +10,5 @@ export interface GamesQueryParams {
     past?: 'true' | 'false';
     start?: string;
     end?: string;
+    oppo?: number;
 }

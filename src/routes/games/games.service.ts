@@ -1,8 +1,9 @@
 import { Component } from '@nestjs/common';
-import { LessThan, MoreThan, Not, Repository } from 'typeorm';
+import { Brackets, In, LessThan, MoreThan, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game } from './games.entity';
 import { GamesQueryParams } from './games.interfaces';
+import { GameResult } from './games.model';
 
 @Component()
 export class GamesService {
@@ -12,6 +13,7 @@ export class GamesService {
     ) {}
 
     public async find(queryParams: GamesQueryParams): Promise<Game[]> {
+
         const {
             count,
             future,
@@ -40,4 +42,17 @@ export class GamesService {
         });
     }
 
+    public async findOne(id: number): Promise<Game> {
+        return await this.gamesRepository.findOne(id);
+    }
+
+    public async findSimilar(game: GameResult): Promise<Game[]> {
+        return await this.gamesRepository.find({
+            where: {
+                homeTeam: In([game.homeTeam.id, game.awayTeam.id]),
+                awayTeam: In([game.homeTeam.id, game.awayTeam.id]),
+                id: Not(game.id),
+            },
+        });
+    }
 }
