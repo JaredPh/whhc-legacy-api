@@ -9,7 +9,7 @@ export class League {
     @Column()
     division: string;
 
-    @Column()
+    @Column({ nullable: true })
     structure: string;
 
     @Column()
