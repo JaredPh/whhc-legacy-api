@@ -6,21 +6,12 @@ ignore:
     - '@nestjs/core > body-parser > debug':
         reason: None given
         expires: '2018-06-26T17:56:44.516Z'
-      '@nestjs/microservices > @nestjs/core > body-parser > debug':
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - bcrypt > node-pre-gyp > tar-pack > debug:
         reason: Still in development
         expires: '2018-05-07T00:05:35.875Z'
-      '@nestjs/testing > @nestjs/core > body-parser > debug':
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - snyk > proxy-agent > pac-proxy-agent > get-uri > debug:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.626Z'
-      '@nestjs/websockets > @nestjs/core > body-parser > debug':
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - snyk > snyk-sbt-plugin > debug:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.626Z'
@@ -96,13 +87,19 @@ ignore:
     - snyk > needle > debug:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.626Z'
+    - '@nestjs/microservices > @nestjs/core > body-parser > debug':
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
+    - '@nestjs/testing > @nestjs/core > body-parser > debug':
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
+    - '@nestjs/websockets > @nestjs/core > body-parser > debug':
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
   'npm:validator:20180218':
     - '@nestjs/common > class-validator > validator':
         reason: awaiting patch
         expires: '2018-09-21T16:34:41.564Z'
-      '@nestjs/core > @nestjs/common > class-validator > validator':
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - '@nestjs/microservices > @nestjs/common > class-validator > validator':
         reason: None given
         expires: '2018-09-22T02:09:27.535Z'
@@ -112,33 +109,18 @@ ignore:
     - '@nestjs/core > @nestjs/common > class-validator > validator':
         reason: Not in prod
         expires: '2018-06-10T11:11:47.407Z'
-      '@nestjs/testing > @nestjs/core > @nestjs/common > class-validator > validator':
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - '@nestjs/testing > @nestjs/core > @nestjs/common > class-validator > validator':
         reason: Not in prod
         expires: '2018-06-10T11:11:47.407Z'
-      '@nestjs/testing > @nestjs/common > class-validator > validator':
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - '@nestjs/websockets > @nestjs/core > @nestjs/common > class-validator > validator':
         reason: Not in prod
         expires: '2018-06-10T11:11:47.407Z'
-      '@nestjs/typeorm > @nestjs/common > class-validator > validator':
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - '@nestjs/typeorm > @nestjs/common > class-validator > validator':
         reason: None given
         expires: '2018-06-26T17:35:57.143Z'
-      '@nestjs/websockets > @nestjs/common > class-validator > validator':
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - '@nestjs/testing > @nestjs/common > class-validator > validator':
         reason: Not in prod
         expires: '2018-06-10T11:11:47.407Z'
-      '@nestjs/websockets > @nestjs/core > @nestjs/common > class-validator > validator':
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - '@nestjs/websockets > @nestjs/common > class-validator > validator':
         reason: None given
         expires: '2018-06-26T17:56:44.517Z'
@@ -205,6 +187,24 @@ ignore:
     - '@nestjs/websockets > @nestjs/core > @nestjs/common > class-validator > validator':
         reason: None given
         expires: '2018-07-31T09:48:28.553Z'
+    - '@nestjs/core > @nestjs/common > class-validator > validator':
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
+    - '@nestjs/testing > @nestjs/core > @nestjs/common > class-validator > validator':
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
+    - '@nestjs/testing > @nestjs/common > class-validator > validator':
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
+    - '@nestjs/typeorm > @nestjs/common > class-validator > validator':
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
+    - '@nestjs/websockets > @nestjs/common > class-validator > validator':
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
+    - '@nestjs/websockets > @nestjs/core > @nestjs/common > class-validator > validator':
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
   'npm:deep-extend:20180409':
     - bcrypt > node-pre-gyp > rc > deep-extend:
         reason: awaiting patch
@@ -213,9 +213,6 @@ ignore:
     - bcrypt > node-pre-gyp > request > stringstream:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.625Z'
-      cognito-express > request-promise > request > stringstream:
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - cognito-express > request-promise > request-promise-core > request > stringstream:
         reason: None given
         expires: '2018-09-22T02:09:27.535Z'
@@ -228,38 +225,48 @@ ignore:
     - cognito-express > request > stringstream:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.626Z'
+    - cognito-express > request-promise > request > stringstream:
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
   'npm:extend:20180424':
     - bcrypt > node-pre-gyp > request > extend:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.625Z'
-      cognito-express > request-promise > request-promise-core > request > extend:
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - cognito-express > request > extend:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.626Z'
-      cognito-express > request-promise > request > extend:
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - snyk > proxy-agent > pac-proxy-agent > get-uri > extend:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.626Z'
     - superagent > extend:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.626Z'
+    - cognito-express > request-promise > request-promise-core > request > extend:
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
+    - cognito-express > request-promise > request > extend:
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
   'npm:cryptiles:20180710':
     - bcrypt > node-pre-gyp > request > hawk > cryptiles:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.625Z'
-      cognito-express > request-promise > request-promise-core > request > hawk > cryptiles:
-        reason: None given
-        expires: '2018-09-22T02:09:27.535Z'
     - cognito-express > request > hawk > cryptiles:
         reason: awaiting patch
         expires: '2018-09-21T16:38:22.626Z'
-      cognito-express > request-promise > request > hawk > cryptiles:
+    - cognito-express > request-promise > request-promise-core > request > hawk > cryptiles:
         reason: None given
         expires: '2018-09-22T02:09:27.535Z'
+    - cognito-express > request-promise > request > hawk > cryptiles:
+        reason: None given
+        expires: '2018-09-22T02:09:27.535Z'
+  'npm:mem:20180117':
+    - typeorm > yargs > os-locale > mem:
+        reason: None given
+        expires: '2018-09-29T09:20:36.083Z'
+    - typeorm > cli-highlight > yargs > os-locale > mem:
+        reason: None given
+        expires: '2018-09-29T09:20:36.083Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:debug:20170905':
