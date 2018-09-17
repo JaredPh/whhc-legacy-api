@@ -13,6 +13,7 @@ import { TagsModule } from './routes/tags/tags.module';
 import { TeamsModule } from './routes/teams/teams.module';
 import { NewsModule } from './routes/news/news.module';
 import { ClubsModule } from './routes/clubs/clubs.module';
+import { RegistrationsModule } from './routes/registrations/registrations.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ClubsModule } from './routes/clubs/clubs.module';
       MembersModule,
       NewsModule,
       PagesModule,
+      RegistrationsModule,
       TagsModule,
       TeamsModule,
       TypeOrmModule.forRoot(),
