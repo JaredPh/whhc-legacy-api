@@ -17,12 +17,12 @@ export class RegistrationsController {
         private readonly mandrillService: MandrillService,
     ) {}
 
-    @Get()
-    async getRegistrations(
-        @Request() req: any,
-    ): Promise<any> {
-        return await this.registrationService.find();
-    }
+    // @Get()
+    // async getRegistrations(
+    //     @Request() req: any,
+    // ): Promise<any> {
+    //     return await this.registrationService.find();
+    // }
 
     @Post()
     async createRegistration(
@@ -47,7 +47,7 @@ export class RegistrationsController {
 
         if (registration.installments === '1') {
             await this.mandrillService.sendTemplate({
-                key: 'gzCgoHgb1Ae7CSdwXDAenA',
+                key: process.env.MANDRILL_KEY,
                 template_name: 'member-payment-details',
                 template_content: [
                     { name: 'fname', content: registration.fname },
@@ -89,18 +89,18 @@ export class RegistrationsController {
         const payment1 = this.gocardlessService.requestPayment(code, registration.mandate, 'Membership 1st Installment', installments[0]);
         const payment2 = this.gocardlessService.requestPayment(code, registration.mandate, 'Membership 2nd Installment', installments[1], '2019-02-01');
 
-        registration.payment1 = await payment1.id;
-        registration.payment2 = await payment2.id;
+        registration.payment1 = (await payment1).id;
+        registration.payment2 = (await payment2).id;
 
         registration = await this.registrationService.save(registration);
 
         await this.mandrillService.sendTemplate({
-            key: 'gzCgoHgb1Ae7CSdwXDAenA',
+            key: process.env.MANDRILL_KEY,
             template_name: 'member-direct-debit-details',
             template_content: [
                 { name: 'fname', content: registration.fname },
                 { name: 'lname', content: registration.lname },
-                { name: 'charge', content: moment(payment1.date).format('dddd, Do MMMM YYYY') },
+                { name: 'charge', content: moment((await payment1).date).format('dddd, Do MMMM YYYY') },
                 { name: 'ione', content: `${this.registrationService.getInstallments(code)[0]}.00` },
                 { name: 'itwo', content: `${this.registrationService.getInstallments(code)[1]}.00` },
             ],

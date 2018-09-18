@@ -64,7 +64,7 @@ export class GocardlessService {
         });
     }
 
-    public requestPayment(code: string, mandate: string, description: string, amount: number, date?: string): Promise<any> {
+    public requestPayment(code: string, mandate: string, description: string, amount: number, date?: string): Promise<{ id: string, date: string }> {
         return new Promise((resolve) => {
 
             const body: GocardlessPaymentRequest = {
