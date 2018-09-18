@@ -11,8 +11,9 @@ import * as helmet from 'helmet';
 import { ApplicationModule } from './app.module';
 import { AuthModule } from './utils/auth/auth.module';
 import { AuthGuard } from './utils/auth/auth.guard';
-import {NewsModule} from "./routes/news/news.module";
-import {NewsController} from "./routes/news/news.controller";
+
+import { NewsController } from './routes/news/news.controller';
+import { NewsModule } from './routes/news/news.module';
 
 dotEnv.config();
 
