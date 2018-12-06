@@ -21,7 +21,7 @@ export class Team {
     // @JoinColumn()
     // captain: Member;
 
-    @ManyToOne(type => Club, { eager: true, nullable: false })
+    @ManyToOne(type => Club, { eager: false, nullable: false })
     @JoinColumn()
     club: Club;
 }

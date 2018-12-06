@@ -39,7 +39,7 @@ export class RegistrationsService {
 
         const earlybird: boolean = moment().isBefore('2018-10-15');
 
-        const type = (team === 'U' || team === 'S')
+        const type = (team === 'U' || team === 'S' || team === 'X')
             ? team
             : membership;
 
@@ -53,6 +53,7 @@ export class RegistrationsService {
     }
 
     public getInstallments(code: string): number[] {
+
         const prefix = code.substring(0, 3);
 
         let installments: number[];
@@ -87,7 +88,7 @@ export class RegistrationsService {
                 installments = [140, 140];
                 break;
             case 'L2A':
-                installments = [275, 140];
+                installments = [155, 140];
                 break;
 
             case 'E1S':

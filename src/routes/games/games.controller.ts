@@ -13,12 +13,13 @@ export class GamesController {
     @Get()
     async getAllEvents(
         @Request() req: any,
-    ): Promise<GamesResponse> {
-        const queryParams = req.query;
-
-        const games = (await this.gamesService.find(queryParams))
-            .map(g => new GameResult(g));
-
-        return { results: games };
+    ): Promise<any> {
+        return await this.gamesService.find();
+        // const queryParams = req.query;
+        //
+        // const games = (await this.gamesService.find(queryParams))
+        //     .map(g => new GameResult(g));
+        //
+        // return { results: games };
     }
 }

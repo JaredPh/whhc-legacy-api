@@ -1,4 +1,7 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn,
+    RelationId,
+} from 'typeorm';
 import { Location } from '../locations/locations.entity';
 import { Image } from '../images/images.entity';
 import { Team } from '../teams/teams.entity';
@@ -18,7 +21,7 @@ export class Club {
     @OneToMany(type => Team, team => team.club)
     teams: Team[];
 
-    @ManyToOne(type => Image, { eager: true, nullable: false })
+    @ManyToOne(type => Image, { eager: false, nullable: false })
     @JoinColumn()
     logo?: Image;
 
@@ -35,4 +38,7 @@ export class Club {
         },
     })
     clubs: Club[];
+
+    @RelationId((club: Club) => club.teams)
+    teamIds: number[];
 }

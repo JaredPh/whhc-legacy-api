@@ -18,15 +18,15 @@ export class Game {
     @Column({ nullable: false })
     status: 'pending' | 'result' | 'postponed' | 'cancelled';
 
-    @ManyToOne(type => League, { eager: true, nullable: false })
+    @ManyToOne(type => League, { eager: false, nullable: false })
     @JoinColumn()
     competition: League;
 
-    @ManyToOne(type => Team, { eager: true, nullable: false })
+    @ManyToOne(type => Team, { eager: false, nullable: false })
     @JoinColumn()
     homeTeam: Team;
 
-    @ManyToOne(type => Team, { eager: true, nullable: false })
+    @ManyToOne(type => Team, { eager: false, nullable: false })
     @JoinColumn()
     awayTeam: Team;
 
@@ -36,7 +36,7 @@ export class Game {
     @Column({ nullable: true })
     awayScore: number;
 
-    @ManyToOne(type => Location, { eager: true, nullable: true })
+    @ManyToOne(type => Location, { eager: false, nullable: true })
     @JoinColumn()
     location: Location;
 }

@@ -11,7 +11,7 @@ export class ClubsService {
     ) {}
 
     public async find() {
-        return await this.clubsRepository.find( { relations: ['teams']});
+        return await this.clubsRepository.find( ); // { relations: ['teams']});
     }
 
     public async findOne(id: number) {
