@@ -44,7 +44,7 @@
     "rxjs": "^5.5.8",
     "snyk": "^1.80.0",
     "superagent": "^3.8.3",
-    "typeorm": "^0.2.6",
+    "typeorm": "^0.2.10",
     "typescript": "^2.8.1",
     "uuid": "^3.2.1"
   },
